@@ -106,15 +106,51 @@ static void idletask(void)
 		}
 }
 
+static int get_aperiodic_task()
+{
+		int32_t queueCount;
+
+		queueCount = hf_queue_count(krnl_aperiodic_queue);
+		if (queueCount == 0)
+				return 0;
+
+		krnl_task = hf_queue_remhead(krnl_aperiodic_queue);
+
+		if (krnl_task->state != TASK_BLOCKED && krnl_task->capacity_rem > 0 && !krnl_task->id) {
+				--krnl_task->capacity_rem;
+		}
+
+		return krnl_task->id;
+}
+
 static void polling_server(void)
 {
-		kprintf("\nKERNEL: Polling Server is running\n");
+		int32_t rc;
 
 		for (;; ) {
-				// get next aperiodic task
-				// change current context
-				// execute aperiodic task
-				// change back the context
+				krnl_task = &krnl_tcb[krnl_current_task];
+				rc = setjmp(krnl_task->task_context);
+				if (rc) {
+						return;
+				}
+				if (krnl_task->state == TASK_RUNNING)
+						krnl_task->state = TASK_READY;
+				if (krnl_task->pstack[0] != STACK_MAGIC)
+						panic(PANIC_STACK_OVERFLOW);
+
+				if (krnl_tasks > 0) {
+						krnl_current_task = get_aperiodic_task();
+						if (krnl_current_task == 0)
+								krnl_current_task = krnl_pcb.sched_be();
+						krnl_task->state = TASK_RUNNING;
+						krnl_pcb.preempt_cswitch++;
+			#if KERNEL_LOG >= 1
+						dprintf("\n%d %d %d %d %d ", krnl_current_task, krnl_task->period, krnl_task->capacity, krnl_task->deadline, (uint32_t)_read_us());
+			#endif
+						_restoreexec(krnl_task->task_context, 1, krnl_current_task);
+				} else {
+						panic(PANIC_NO_TASKS_LEFT);
+				}
 		}
 }
 

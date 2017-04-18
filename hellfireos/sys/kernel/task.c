@@ -225,12 +225,16 @@ int32_t hf_priorityget(uint16_t id)
 int32_t hf_spawn(void (*task)(), uint16_t period, uint16_t capacity, uint16_t deadline, int8_t *name, uint32_t stack_size)
 {
 		volatile uint32_t status, i = 0;
+		int is_aperiodic = 0;
 
 #if KERNEL_LOG == 2
 		dprintf("hf_spawn() %d ", (uint32_t)_read_us());
 #endif
-		if ((period < capacity) || (deadline < capacity))
+		if (period == 0 && deadline == 0 && capacity != 0) {
+				is_aperiodic = 1;
+		} else if ((period < capacity) || (deadline < capacity)) {
 				return ERR_INVALID_PARAMETER;
+		}
 
 		status = _di();
 		while ((krnl_tcb[i].ptask != 0) && (i < MAX_TASKS))
@@ -267,10 +271,10 @@ int32_t hf_spawn(void (*task)(), uint16_t period, uint16_t capacity, uint16_t de
 		if (krnl_task->pstack) {
 				krnl_task->pstack[0] = STACK_MAGIC;
 				kprintf("\nKERNEL: [%s], id: %d, p:%d, c:%d, d:%d, addr: %x, sp: %x, ss: %d bytes", krnl_task->name, krnl_task->id, krnl_task->period, krnl_task->capacity, krnl_task->deadline, krnl_task->ptask, _get_task_sp(krnl_task->id), stack_size);
-				if (period) {
-						if (hf_queue_addtail(krnl_rt_queue, krnl_task)) panic(PANIC_CANT_PLACE_RT);
-				} else if (capacity) {
+				if (is_aperiodic) {
 						if (hf_queue_addtail(krnl_aperiodic_queue, krnl_task)) panic(PANIC_CANT_PLACE_RT);
+				} else if (period) {
+						if (hf_queue_addtail(krnl_rt_queue, krnl_task)) panic(PANIC_CANT_PLACE_RT);
 				} else {
 						if (hf_queue_addtail(krnl_run_queue, krnl_task)) panic(PANIC_CANT_PLACE_RUN);
 				}
