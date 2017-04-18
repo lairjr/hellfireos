@@ -13,5 +13,4 @@ kernel:
 		$(SRC_DIR)/sys/kernel/task.c \
 		$(SRC_DIR)/sys/kernel/scheduler.c \
 		$(SRC_DIR)/sys/kernel/processor.c \
-		$(SRC_DIR)/sys/kernel/polling_server.c \
 		$(SRC_DIR)/sys/kernel/main.c
