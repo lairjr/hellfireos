@@ -15,5 +15,8 @@ single-core-image:
 single-core: simulator single-core-image
 	docker run -v $(FOLDER_PATH):/hellfireos -w /hellfireos/platform/single_core --name singlecore --rm -t -i hellfire ../../usr/sim/hf_risc_sim/hf_risc_sim image.bin
 
+dump-single-core: simulator single-core-image
+	docker run -v $(FOLDER_PATH):/hellfireos -w /hellfireos/platform/single_core --name singlecore --rm -t -i hellfire ../../usr/sim/hf_risc_sim/hf_risc_sim image.bin log_file.txt
+
 stop:
 	docker stop $$(docker ps -f "name=singlecore" --format="{{.ID}}")
