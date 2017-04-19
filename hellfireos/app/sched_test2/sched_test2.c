@@ -11,9 +11,18 @@ void task(void){
 		}
 }
 
+void aperiodic(void){
+		int32_t id;
+
+		id = hf_selfid();
+		for(;; ) {
+				printf("\n%s (%d)[%d][%d]", hf_selfname(), id, hf_jobs(id), hf_dlm(id));
+		}
+}
+
 void app_main(void){
 		hf_spawn(task, 4, 1, 4, "task a", 2048);
 		hf_spawn(task, 8, 2, 8, "task b", 2048);
 		hf_spawn(task, 12, 3, 12, "task c", 2048);
-		hf_spawn(task, 0, 2, 0, "aperiodic task", 2048);
+		hf_spawn(aperiodic, 0, 3, 0, "aperiodic task", 2048);
 }

@@ -108,16 +108,16 @@ static void idletask(void)
 
 static int get_aperiodic_task()
 {
-		int32_t queueCount;
+		int32_t queue_count;
 
-		queueCount = hf_queue_count(krnl_aperiodic_queue);
-		if (queueCount == 0)
+		queue_count = hf_queue_count(krnl_aperiodic_queue);
+		if (queue_count == 0)
 				return 0;
-
 		krnl_task = hf_queue_remhead(krnl_aperiodic_queue);
 
-		if (krnl_task->state != TASK_BLOCKED && krnl_task->capacity_rem > 0 && !krnl_task->id) {
+		if (krnl_task->state != TASK_BLOCKED && krnl_task->capacity_rem > 0 && krnl_task->id) {
 				--krnl_task->capacity_rem;
+				if (hf_queue_addtail(krnl_aperiodic_queue, krnl_task)) panic(PANIC_CANT_PLACE_APERIODIC);
 		}
 
 		return krnl_task->id;
