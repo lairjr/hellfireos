@@ -20,3 +20,6 @@ dump-single-core: simulator single-core-image
 
 stop:
 	docker stop $$(docker ps -f "name=singlecore" --format="{{.ID}}")
+
+clean-single-core:
+	docker run -v $(FOLDER_PATH):/hellfireos -w /hellfireos/platform/single_core -t -i hellfire make clean
