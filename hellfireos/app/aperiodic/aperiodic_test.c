@@ -27,8 +27,8 @@ void trigger_aperiodic(void) {
 
 		id = hf_selfid();
 		for(;; ) {
-				// int r = (random() % 140) + 60;
-				delay_ms(200);
+				int r = (random() % 140) + 60;
+				delay_ms(r);
 				hf_spawn(aperiodic, 0, 2, 0, "aperiodic a", 2048);
 		}
 }
