@@ -4,7 +4,7 @@
 #include <panic.h>
 #include <polling_server.h>
 
-int get_aperiodic_task()
+int32_t get_aperiodic_task()
 {
 		int32_t queue_count;
 
