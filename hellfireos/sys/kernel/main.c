@@ -141,7 +141,7 @@ int main(void)
 				_timer_init();
 				_timer_reset();
 				hf_spawn(idletask, 0, 0, 0, "idle task", 1024);
-				hf_spawn(polling_server, 7, 2, 7, "polling server", 1024);
+				polling_server_id = hf_spawn(polling_server, 7, 2, 7, "polling server", 1024);
 				_device_init();
 				_task_init();
 				app_main();

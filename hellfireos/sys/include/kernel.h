@@ -77,3 +77,4 @@ struct queue *krnl_aperiodic_queue;                /*!< pointer to a queue of re
 struct queue *krnl_event_queue;             /*!< pointer to a queue of tasks waiting for an event */
 uint8_t krnl_heap[HEAP_SIZE];               /*!< contiguous heap memory area to be used as a memory pool. the memory allocator (malloc() and free()) controls this data structure */
 uint32_t krnl_free;                 /*!< amount of free heap memory, in bytes */
+int32_t polling_server_id;                  /*!< polling server task id */
