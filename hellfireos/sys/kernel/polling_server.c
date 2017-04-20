@@ -39,12 +39,13 @@ void polling_server(void)
 				if (krnl_tasks > 0) {
 						krnl_current_task = get_aperiodic_task();
 						if (krnl_current_task == 0)
-								krnl_current_task = krnl_pcb.sched_be();
+								return;
 						krnl_task->state = TASK_RUNNING;
-						krnl_pcb.preempt_cswitch++;
-			#if KERNEL_LOG >= 1
+						krnl_task->apjobs++;
+						krnl_pcb.coop_cswitch++;
+		#if KERNEL_LOG >= 1
 						dprintf("\n%d %d %d %d %d ", krnl_current_task, krnl_task->period, krnl_task->capacity, krnl_task->deadline, (uint32_t)_read_us());
-			#endif
+		#endif
 						_restoreexec(krnl_task->task_context, 1, krnl_current_task);
 				} else {
 						panic(PANIC_NO_TASKS_LEFT);

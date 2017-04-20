@@ -80,6 +80,33 @@ uint16_t hf_selfid(void)
 }
 
 /**
+ * @brief Get the current task capcity remaining.
+ *
+ * @return current task name.
+ */
+int8_t *hf_selfcapacity_rem(void)
+{
+#if KERNEL_LOG == 2
+		dprintf("hf_selfcapacity_rem() %d ", (uint32_t)_read_us());
+#endif
+		return krnl_task->capacity_rem;
+}
+
+
+/**
+ * @brief Get the current task capacity.
+ *
+ * @return current task name.
+ */
+int8_t *hf_selfcapacity(void)
+{
+#if KERNEL_LOG == 2
+		dprintf("hf_selfcapacity() %d ", (uint32_t)_read_us());
+#endif
+		return krnl_task->capacity;
+}
+
+/**
  * @brief Get the current task name.
  *
  * @return current task name.
@@ -122,13 +149,15 @@ int32_t hf_jobs(uint16_t id)
 #if KERNEL_LOG == 2
 		dprintf("hf_jobs() %d ", (uint32_t)_read_us());
 #endif
-		if (id < MAX_TASKS)
-				if (krnl_tcb[id].ptask) {
-						if (krnl_tcb[id].period)
-								return krnl_tcb[id].rtjobs;
-						else
-								return krnl_tcb[id].bgjobs;
+		if (id < MAX_TASKS) {
+				if (krnl_tcb[id].period == 0 && krnl_tcb[id].deadline == 0 && krnl_tcb[id].capacity > 0) {
+						return krnl_tcb[id].apjobs;
+				} else if (krnl_tcb[id].period) {
+						return krnl_tcb[id].rtjobs;
+				} else {
+						return krnl_tcb[id].bgjobs;
 				}
+		}
 		return ERR_INVALID_ID;
 }
 
@@ -259,6 +288,7 @@ int32_t hf_spawn(void (*task)(), uint16_t period, uint16_t capacity, uint16_t de
 		krnl_task->deadline_rem = deadline;
 		krnl_task->rtjobs = 0;
 		krnl_task->bgjobs = 0;
+		krnl_task->apjobs = 0;
 		krnl_task->deadline_misses = 0;
 		krnl_task->ptask = task;
 		stack_size += 3;

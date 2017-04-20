@@ -56,6 +56,7 @@ static void clear_tcb(void)
 				krnl_task->delay = 0;
 				krnl_task->rtjobs = 0;
 				krnl_task->bgjobs = 0;
+				krnl_task->apjobs = 0;
 				krnl_task->deadline_misses = 0;
 				krnl_task->period = 0;
 				krnl_task->capacity = 0;
@@ -140,7 +141,7 @@ int main(void)
 				_timer_init();
 				_timer_reset();
 				hf_spawn(idletask, 0, 0, 0, "idle task", 1024);
-				hf_spawn(polling_server, 7, 1, 7, "polling server", 1024);
+				hf_spawn(polling_server, 7, 2, 7, "polling server", 1024);
 				_device_init();
 				_task_init();
 				app_main();
