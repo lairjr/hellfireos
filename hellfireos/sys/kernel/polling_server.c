@@ -16,7 +16,9 @@ int32_t get_aperiodic_task()
 		if (krnl_task->state != TASK_BLOCKED && krnl_task->capacity_rem > 0 && krnl_task->id) {
 				--krnl_task->capacity_rem;
 				krnl_task->apjobs++;
-				if (hf_queue_addtail(krnl_aperiodic_queue, krnl_task)) panic(PANIC_CANT_PLACE_APERIODIC);
+				if (krnl_task->capacity_rem > 0) {
+						if (hf_queue_addtail(krnl_aperiodic_queue, krnl_task)) panic(PANIC_CANT_PLACE_APERIODIC);
+				}
 		}
 
 		return krnl_task->id;
