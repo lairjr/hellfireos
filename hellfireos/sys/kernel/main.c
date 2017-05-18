@@ -30,81 +30,81 @@
 
 static void print_config(void)
 {
-		kprintf("\n===========================================================");
-		kprintf("\nHellfireOS %s [%s, %s]", KERN_VER, __DATE__, __TIME__);
-		kprintf("\nEmbedded Systems Group - GSE, PUCRS - [2007 - 2017]");
-		kprintf("\n===========================================================\n");
-		kprintf("\narch:          %s", CPU_ARCH);
-		kprintf("\nsys clk:       %d kHz", CPU_SPEED/1000);
-		if (TIME_SLICE != 0)
-				kprintf("\ntime slice:    %d us", TIME_SLICE);
-		kprintf("\nheap size:     %d bytes", sizeof(krnl_heap));
-		kprintf("\nmax tasks:     %d\n", MAX_TASKS);
+        kprintf("\n===========================================================");
+        kprintf("\nHellfireOS %s [%s, %s]", KERN_VER, __DATE__, __TIME__);
+        kprintf("\nEmbedded Systems Group - GSE, PUCRS - [2007 - 2017]");
+        kprintf("\n===========================================================\n");
+        kprintf("\narch:          %s", CPU_ARCH);
+        kprintf("\nsys clk:       %d kHz", CPU_SPEED/1000);
+        if (TIME_SLICE != 0)
+                kprintf("\ntime slice:    %d us", TIME_SLICE);
+        kprintf("\nheap size:     %d bytes", sizeof(krnl_heap));
+        kprintf("\nmax tasks:     %d\n", MAX_TASKS);
 }
 
 static void clear_tcb(void)
 {
-		uint16_t i;
+        uint16_t i;
 
-		for(i = 0; i < MAX_TASKS; i++) {
-				krnl_task = &krnl_tcb[i];
-				krnl_task->id = -1;
-				memset(krnl_task->name, 0, sizeof(krnl_task->name));
-				krnl_task->state = TASK_IDLE;
-				krnl_task->priority = 0;
-				krnl_task->priority_rem = 0;
-				krnl_task->delay = 0;
-				krnl_task->rtjobs = 0;
-				krnl_task->bgjobs = 0;
-				krnl_task->deadline_misses = 0;
-				krnl_task->period = 0;
-				krnl_task->capacity = 0;
-				krnl_task->deadline = 0;
-				krnl_task->capacity_rem = 0;
-				krnl_task->deadline_rem = 0;
-				krnl_task->ptask = NULL;
-				krnl_task->pstack = NULL;
-				krnl_task->stack_size = 0;
-				krnl_task->other_data = 0;
-		}
+        for(i = 0; i < MAX_TASKS; i++) {
+                krnl_task = &krnl_tcb[i];
+                krnl_task->id = -1;
+                memset(krnl_task->name, 0, sizeof(krnl_task->name));
+                krnl_task->state = TASK_IDLE;
+                krnl_task->priority = 0;
+                krnl_task->priority_rem = 0;
+                krnl_task->delay = 0;
+                krnl_task->rtjobs = 0;
+                krnl_task->bgjobs = 0;
+                krnl_task->deadline_misses = 0;
+                krnl_task->period = 0;
+                krnl_task->capacity = 0;
+                krnl_task->deadline = 0;
+                krnl_task->capacity_rem = 0;
+                krnl_task->deadline_rem = 0;
+                krnl_task->ptask = NULL;
+                krnl_task->pstack = NULL;
+                krnl_task->stack_size = 0;
+                krnl_task->other_data = 0;
+        }
 
-		krnl_tasks = 0;
-		krnl_current_task = 0;
-		krnl_schedule = 0;
+        krnl_tasks = 0;
+        krnl_current_task = 0;
+        krnl_schedule = 0;
 }
 
 static void clear_pcb(void)
 {
-		krnl_pcb.sched_rt = sched_rma;
-		krnl_pcb.sched_be = sched_priorityrr;
-		krnl_pcb.coop_cswitch = 0;
-		krnl_pcb.preempt_cswitch = 0;
-		krnl_pcb.interrupts = 0;
-		krnl_pcb.tick_time = 0;
+        krnl_pcb.sched_rt = sched_rma;
+        krnl_pcb.sched_be = sched_priorityrr;
+        krnl_pcb.coop_cswitch = 0;
+        krnl_pcb.preempt_cswitch = 0;
+        krnl_pcb.interrupts = 0;
+        krnl_pcb.tick_time = 0;
 }
 
 static void init_queues(void)
 {
-		krnl_run_queue = hf_queue_create(MAX_TASKS);
-		if (krnl_run_queue == NULL) panic(PANIC_OOM);
-		krnl_delay_queue = hf_queue_create(MAX_TASKS);
-		if (krnl_delay_queue == NULL) panic(PANIC_OOM);
-		krnl_rt_queue = hf_queue_create(MAX_TASKS);
-		if (krnl_rt_queue == NULL) panic(PANIC_OOM);
-		krnl_aperiodic_queue = hf_queue_create(MAX_TASKS);
-		if (krnl_aperiodic_queue == NULL) panic(PANIC_OOM);
+        krnl_run_queue = hf_queue_create(MAX_TASKS);
+        if (krnl_run_queue == NULL) panic(PANIC_OOM);
+        krnl_delay_queue = hf_queue_create(MAX_TASKS);
+        if (krnl_delay_queue == NULL) panic(PANIC_OOM);
+        krnl_rt_queue = hf_queue_create(MAX_TASKS);
+        if (krnl_rt_queue == NULL) panic(PANIC_OOM);
+        krnl_aperiodic_queue = hf_queue_create(MAX_TASKS);
+        if (krnl_aperiodic_queue == NULL) panic(PANIC_OOM);
 }
 
 static void idletask(void)
 {
-		kprintf("\nKERNEL: free heap: %d bytes", krnl_free);
-		kprintf("\nKERNEL: HellfireOS is running\n");
+        kprintf("\nKERNEL: free heap: %d bytes", krnl_free);
+        kprintf("\nKERNEL: HellfireOS is running\n");
 
-		hf_schedlock(0);
+        hf_schedlock(0);
 
-		for (;; ) {
-				_cpu_idle();
-		}
+        for (;; ) {
+                _cpu_idle();
+        }
 }
 
 /**
@@ -122,33 +122,32 @@ static void idletask(void)
  */
 int main(void)
 {
-		static uint32_t oops=0xbaadd00d;
+        static uint32_t oops=0xbaadd00d;
 
-		_hardware_init();
-		hf_schedlock(1);
-		_di();
-		kprintf("\nKERNEL: booting...");
-		if (oops == 0xbaadd00d) {
-				oops = 0;
-				print_config();
-				_vm_init();
-				clear_tcb();
-				clear_pcb();
-				init_queues();
-				_sched_init();
-				_irq_init();
-				_timer_init();
-				_timer_reset();
-				hf_spawn(idletask, 0, 0, 0, "idle task", 1024);
-				hf_spawn(polling_server, 4, 2, 20, "polling server", 1024);
-				_device_init();
-				_task_init();
-				app_main();
-				_restoreexec(krnl_task->task_context, 1, krnl_current_task);
-				panic(PANIC_ABORTED);
-		}else{
-				panic(PANIC_GPF);
-		}
+        _hardware_init();
+        hf_schedlock(1);
+        _di();
+        kprintf("\nKERNEL: booting...");
+        if (oops == 0xbaadd00d) {
+                oops = 0;
+                print_config();
+                _vm_init();
+                clear_tcb();
+                clear_pcb();
+                init_queues();
+                _sched_init();
+                _irq_init();
+                _timer_init();
+                _timer_reset();
+                hf_spawn(idletask, 0, 0, 0, "idle task", 1024);
+                _device_init();
+                _task_init();
+                app_main();
+                _restoreexec(krnl_task->task_context, 1, krnl_current_task);
+                panic(PANIC_ABORTED);
+        }else{
+                panic(PANIC_GPF);
+        }
 
-		return 0;
+        return 0;
 }
