@@ -1,45 +1,314 @@
 #include <hellfire.h>
 #include <noc.h>
 
-void sender(void)
+struct task_info {
+        int id;
+        int cpu;
+        int port;
+};
+
+static struct task_info TASK_1 = { 1, 0, 60001 };
+static struct task_info TASK_2 = { 2, 1, 60002 };
+static struct task_info TASK_3 = { 3, 2, 60003 };
+static struct task_info TASK_4 = { 4, 3, 60004 };
+static struct task_info TASK_5 = { 5, 4, 60005 };
+static struct task_info TASK_6 = { 6, 5, 60006 };
+static struct task_info TASK_7 = { 7, 3, 60007 };
+static struct task_info TASK_8 = { 8, 1, 60008 };
+static struct task_info TASK_9 = { 9, 2, 60009 };
+
+static int send_message(struct task_info origin, struct task_info dest)
 {
-        int32_t msg = 0;
         int8_t buf[1500];
-        uint16_t val;
+        uint16_t send_ack;
 
-        if (hf_comm_create(hf_selfid(), 1000, 0))
-                panic(0xff);
+        send_ack = hf_sendack(dest.cpu, dest.port, buf, sizeof(buf), 0, 500);
+        if (send_ack)
+                printf("task %d FAILED to transmit to task %d on CPU %d with error: %d\n", origin.id, dest.id, dest.cpu, send_ack);
+        else
+                printf("task %d transmitted to task %d on CPU %d\n", origin.id, dest.id, dest.cpu);
 
-        while (1) {
-                sprintf(buf, "i am cpu %d, thread %d: msg %d size: %d\n", hf_cpuid(), hf_selfid(), msg++, sizeof(buf));
-                val = hf_sendack(3, 5000, buf, sizeof(buf), 0, 500);
-                if (val)
-                        printf("hf_sendack(): error %d\n", val);
+        return !send_ack;
+}
+
+static int check_and_send(int check, struct task_info origin, struct task_info dest)
+{
+        if (!check)
+                check = send_message(origin, dest);
+
+        return check;
+}
+
+static int receive_message(struct task_info origin)
+{
+        int8_t buf[1500];
+        uint16_t cpu, receive_port, size, receive_ack;
+
+        receive_ack = hf_recvack(&cpu, &receive_port, buf, &size, 0);
+
+        if (receive_ack)
+                printf("hf_recvack(): error %d\n", receive_ack);
+        else
+        {
+                printf("task %d received on port %d from CPU %d\n", origin.id, receive_port, cpu);
+                return receive_port;
+        }
+
+        return !receive_ack;
+}
+
+static int check_port(int port, int intended_port)
+{
+        int is_correct = 0;
+
+        if (port == intended_port)
+                is_correct = 1;
+
+        return is_correct;
+}
+
+void task1(void)
+{
+        int has_sended_to_task2 = 0, has_sended_to_task3 = 0, has_sended_to_task4 = 0,
+            has_sended_to_task5 = 0, has_sended_to_task7 = 0;
+
+        while (1)
+        {
+                if (hf_comm_create(hf_selfid(), TASK_1.port, 0))
+                        panic(0xff);
+
+                has_sended_to_task2 = check_and_send(has_sended_to_task2, TASK_1, TASK_2);
+                has_sended_to_task3 = check_and_send(has_sended_to_task3, TASK_1, TASK_3);
+                has_sended_to_task4 = check_and_send(has_sended_to_task4, TASK_1, TASK_4);
+                has_sended_to_task5 = check_and_send(has_sended_to_task5, TASK_1, TASK_5);
+                has_sended_to_task7 = check_and_send(has_sended_to_task7, TASK_1, TASK_7);
         }
 }
 
-void receiver(void)
+void task2(void)
 {
-        int8_t buf[1500];
-        uint16_t cpu, task, size, val;
+        int has_received_from_task1 = 0;
+        int has_sended_to_task6 = 0, has_sended_to_task7 = 0, has_sended_to_task8 = 0;
 
-        if (hf_comm_create(hf_selfid(), 5000, 0))
-                panic(0xff);
+        while (1)
+        {
+                if (hf_comm_create(hf_selfid(), TASK_2.port, 0))
+                        panic(0xff);
 
-        while (1) {
-                val = hf_recvack(&cpu, &task, buf, &size, 0);
-                if (val)
-                        printf("hf_recvack(): error %d\n", val);
-                else
-                        printf("%s", buf);
+                int received_port = receive_message(TASK_2);
+
+                has_received_from_task1 = check_port(received_port, TASK_1.port);
+
+                if (has_received_from_task1)
+                {
+                        has_sended_to_task6 = check_and_send(has_sended_to_task6, TASK_2, TASK_6);
+                        has_sended_to_task7 = check_and_send(has_sended_to_task7, TASK_2, TASK_7);
+                        has_sended_to_task8 = check_and_send(has_sended_to_task8, TASK_2, TASK_8);
+                }
+                delay_ms(10);
+        }
+}
+
+void task3(void)
+{
+        int has_received_from_task1 = 0;
+        int has_sended_to_task7 = 0, has_sended_to_task8 = 0;
+
+        while (1)
+        {
+                if (hf_comm_create(hf_selfid(), TASK_3.port, 0))
+                        panic(0xff);
+
+                int received_port = receive_message(TASK_3);
+
+                has_received_from_task1 = check_port(received_port, TASK_1.port);
+
+                if (has_received_from_task1)
+                {
+                        has_sended_to_task7 = check_and_send(has_sended_to_task7, TASK_3, TASK_7);
+                        has_sended_to_task8 = check_and_send(has_sended_to_task8, TASK_3, TASK_8);
+                }
+                delay_ms(10);
+        }
+}
+
+void task4(void)
+{
+        int has_received_from_task1 = 0;
+        int has_sended_to_task8 = 0;
+
+        while (1)
+        {
+                if (hf_comm_create(hf_selfid(), TASK_4.port, 0))
+                        panic(0xff);
+
+                int received_port = receive_message(TASK_4);
+
+                has_received_from_task1 = check_port(received_port, TASK_1.port);
+
+                if (has_received_from_task1)
+                {
+                        has_sended_to_task8 = check_and_send(has_sended_to_task8, TASK_4, TASK_8);
+                }
+                delay_ms(10);
+        }
+}
+
+void task5(void)
+{
+        int has_received_from_task1 = 0;
+        int has_sended_to_task8 = 0;
+
+        while (1)
+        {
+                if (hf_comm_create(hf_selfid(), TASK_5.port, 0))
+                        panic(0xff);
+
+                int received_port = receive_message(TASK_5);
+
+                has_received_from_task1 = check_port(received_port, TASK_1.port);
+
+                if (has_received_from_task1)
+                {
+                        has_sended_to_task8 = check_and_send(has_sended_to_task8, TASK_5, TASK_8);
+                }
+        }
+}
+
+void task6(void)
+{
+        int has_received_from_task2 = 0;
+        int has_sended_to_task9 = 0;
+
+        while (1)
+        {
+                if (hf_comm_create(hf_selfid(), TASK_6.port, 0))
+                        panic(0xff);
+
+                int received_port = receive_message(TASK_6);
+
+                has_received_from_task2 = check_port(received_port, TASK_2.port);
+
+                if (has_received_from_task2)
+                {
+                        has_sended_to_task9 = check_and_send(has_sended_to_task9, TASK_6, TASK_9);
+                }
+                delay_ms(10);
+        }
+}
+
+void task7(void)
+{
+        int has_received_from_task1 = 0, has_received_from_task2 = 0, has_received_from_task3 = 0;
+        int has_sended_to_task9 = 0;
+
+        while (1)
+        {
+                if (hf_comm_create(hf_selfid(), TASK_7.port, 0))
+                        panic(0xff);
+
+                int received_port = receive_message(TASK_7);
+
+                has_received_from_task1 = check_port(received_port, TASK_1.port);
+                has_received_from_task2 = check_port(received_port, TASK_2.port);
+                has_received_from_task3 = check_port(received_port, TASK_3.port);
+
+                if (has_received_from_task1 && has_received_from_task2 && has_received_from_task3)
+                {
+                        has_sended_to_task9 = check_and_send(has_sended_to_task9, TASK_7, TASK_9);
+                }
+                delay_ms(10);
+        }
+}
+
+void task8(void)
+{
+        int has_received_from_task2 = 0, has_received_from_task3 = 0, has_received_from_task4 = 0,
+            has_received_from_task5 = 0;
+        int has_sended_to_task9 = 0;
+
+        while (1)
+        {
+                if (hf_comm_create(hf_selfid(), TASK_8.port, 0))
+                        panic(0xff);
+
+                int received_port = receive_message(TASK_8);
+
+                has_received_from_task2 = check_port(received_port, TASK_2.port);
+                has_received_from_task3 = check_port(received_port, TASK_3.port);
+                has_received_from_task4 = check_port(received_port, TASK_4.port);
+                has_received_from_task5 = check_port(received_port, TASK_5.port);
+
+                if (has_received_from_task2 &&
+                    has_received_from_task3 &&
+                    has_received_from_task4 &&
+                    has_received_from_task5)
+                {
+                        has_sended_to_task9 = check_and_send(has_sended_to_task9, TASK_8, TASK_9);
+                }
+                delay_ms(10);
+        }
+}
+
+void task9(void)
+{
+        int has_received_from_task6 = 0, has_received_from_task7 = 0, has_received_from_task8 = 0;
+
+        while (1)
+        {
+                if (hf_comm_create(hf_selfid(), TASK_9.port, 0))
+                        panic(0xff);
+
+                int received_port = receive_message(TASK_9);
+
+                has_received_from_task6 = check_port(received_port, TASK_6.port);
+                has_received_from_task7 = check_port(received_port, TASK_7.port);
+                has_received_from_task8 = check_port(received_port, TASK_8.port);
+
+                if (has_received_from_task6 && has_received_from_task7 && has_received_from_task8)
+                {
+                        printf("Network completed.\n");
+                }
+                delay_ms(10);
         }
 }
 
 void app_main(void)
 {
-        if (hf_cpuid() == 2) {
-                hf_spawn(sender, 0, 0, 0, "sender", 4096);
-        }else{
-                hf_spawn(receiver, 0, 0, 0, "receiver", 4096);
+        if (hf_cpuid() == TASK_1.cpu)
+        {
+                hf_spawn(task1, 0, 0, 0, "task1", 4096);
+        }
+        if (hf_cpuid() == TASK_2.cpu)
+        {
+                hf_spawn(task2, 0, 0, 0, "task2", 4096);
+        }
+        if (hf_cpuid() == TASK_3.cpu)
+        {
+                hf_spawn(task3, 0, 0, 0, "task3", 4096);
+        }
+        if (hf_cpuid() == TASK_4.cpu)
+        {
+                hf_spawn(task4, 0, 0, 0, "task4", 4096);
+        }
+        if (hf_cpuid() == TASK_5.cpu)
+        {
+                hf_spawn(task5, 0, 0, 0, "task5", 4096);
+        }
+        if (hf_cpuid() == TASK_6.cpu)
+        {
+                hf_spawn(task6, 0, 0, 0, "task6", 4096);
+        }
+        if (hf_cpuid() == TASK_7.cpu)
+        {
+                hf_spawn(task7, 0, 0, 0, "task7", 4096);
+        }
+        if (hf_cpuid() == TASK_8.cpu)
+        {
+                hf_spawn(task8, 0, 0, 0, "task8", 4096);
+        }
+        if (hf_cpuid() == TASK_9.cpu)
+        {
+                hf_spawn(task9, 0, 0, 0, "task9", 4096);
         }
 }
