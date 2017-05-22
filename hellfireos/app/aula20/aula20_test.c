@@ -16,7 +16,7 @@ static struct task_info TASK_5 = { 5, 4, 60005, 5 };
 static struct task_info TASK_6 = { 6, 5, 60006, 6 };
 static struct task_info TASK_7 = { 7, 0, 60007, 7 };
 static struct task_info TASK_8 = { 8, 0, 60008, 8 };
-static struct task_info TASK_9 = { 9, 0, 60009, 9 };
+static struct task_info TASK_9 = { 9, 2, 60009, 9 };
 
 static int send_message(struct task_info origin, struct task_info dest)
 {
@@ -93,9 +93,9 @@ void task2(void)
 
         while (1)
         {
-                int received_channel = receive_message(TASK_2);
+                int received_port = receive_message(TASK_2);
 
-                has_received_from_task1 = check_port(received_channel, TASK_1.port);
+                has_received_from_task1 = check_port(received_port, TASK_1.port);
 
                 if (has_received_from_task1)
                 {
@@ -277,48 +277,48 @@ void app_main(void)
 {
         if (hf_cpuid() == TASK_1.cpu)
         {
-                int task_id = hf_spawn(task1, 4, 1, 4, "task1", 4096);
+                int task_id = hf_spawn(task1, 0, 0, 0, "task1", 4096);
                 hf_comm_create(task_id, TASK_1.port, 0);
         }
         if (hf_cpuid() == TASK_2.cpu)
         {
-                int task_id = hf_spawn(task2, 4, 1, 4, "task2", 4096);
+                int task_id = hf_spawn(task2, 0, 0, 0, "task2", 4096);
                 hf_comm_create(task_id, TASK_2.port, 0);
         }
         if (hf_cpuid() == TASK_3.cpu)
         {
-                int task_id = hf_spawn(task3, 4, 1, 4, "task3", 4096);
+                int task_id = hf_spawn(task3, 0, 0, 0, "task3", 4096);
                 hf_comm_create(task_id, TASK_3.port, 0);
         }
         if (hf_cpuid() == TASK_4.cpu)
         {
-                int task_id = hf_spawn(task4, 4, 1, 4, "task4", 4096);
+                int task_id = hf_spawn(task4, 0, 0, 0, "task4", 4096);
                 hf_comm_create(task_id, TASK_4.port, 0);
         }
         if (hf_cpuid() == TASK_5.cpu)
         {
-                int task_id = hf_spawn(task5, 4, 1, 4, "task5", 4096);
+                int task_id = hf_spawn(task5, 0, 0, 0, "task5", 4096);
                 hf_comm_create(task_id, TASK_5.port, 0);
         }
         if (hf_cpuid() == TASK_6.cpu)
         {
-                int task_id = hf_spawn(task6, 4, 1, 4, "task6", 4096);
+                int task_id = hf_spawn(task6, 0, 0, 0, "task6", 4096);
                 hf_comm_create(task_id, TASK_6.port, 0);
 
         }
         if (hf_cpuid() == TASK_7.cpu)
         {
-                int task_id = hf_spawn(task7, 4, 1, 4, "task7", 4096);
+                int task_id = hf_spawn(task7, 0, 0, 0, "task7", 4096);
                 hf_comm_create(task_id, TASK_7.port, 0);
         }
         if (hf_cpuid() == TASK_8.cpu)
         {
-                int task_id = hf_spawn(task8, 4, 1, 4, "task8", 4096);
+                int task_id = hf_spawn(task8, 0, 0, 0, "task8", 4096);
                 hf_comm_create(task_id, TASK_8.port, 0);
         }
         if (hf_cpuid() == TASK_9.cpu)
         {
-                int task_id = hf_spawn(task9, 4, 1, 4, "task9", 4096);
+                int task_id = hf_spawn(task9, 0, 0, 0, "task9", 4096);
                 hf_comm_create(task_id, TASK_9.port, 0);
         }
 }
