@@ -9,14 +9,14 @@ struct task_info {
 };
 
 static struct task_info TASK_1 = { 1, 0, 60001, 1 };
-static struct task_info TASK_2 = { 2, 1, 60002, 1 };
-static struct task_info TASK_3 = { 3, 2, 60003, 1 };
-static struct task_info TASK_4 = { 4, 3, 60004, 1 };
-static struct task_info TASK_5 = { 5, 4, 60005, 1 };
-static struct task_info TASK_6 = { 6, 5, 60006, 1 };
-static struct task_info TASK_7 = { 7, 0, 60007, 1 };
-static struct task_info TASK_8 = { 8, 0, 60008, 1 };
-static struct task_info TASK_9 = { 9, 2, 60001, 2 };
+static struct task_info TASK_2 = { 2, 1, 60002, 2 };
+static struct task_info TASK_3 = { 3, 2, 60003, 3 };
+static struct task_info TASK_4 = { 4, 3, 60004, 4 };
+static struct task_info TASK_5 = { 5, 4, 60005, 5 };
+static struct task_info TASK_6 = { 6, 5, 60006, 6 };
+static struct task_info TASK_7 = { 7, 0, 60007, 7 };
+static struct task_info TASK_8 = { 8, 0, 60008, 8 };
+static struct task_info TASK_9 = { 9, 0, 60009, 9 };
 
 static int send_message(struct task_info origin, struct task_info dest)
 {
@@ -55,17 +55,17 @@ static int receive_message(struct task_info origin)
         else
         {
                 printf("task %d received on port %d from CPU %d\n", origin.id, receive_port, cpu);
-                return origin.channel;
+                return receive_port;
         }
 
         return !receive_ack;
 }
 
-static int check_port(int channel, int intended_channel)
+static int check_port(int port, int intended_port)
 {
         int is_correct = 0;
 
-        if (channel == intended_channel)
+        if (port == intended_port)
                 is_correct = 1;
 
         return is_correct;
@@ -75,9 +75,6 @@ void task1(void)
 {
         int has_sended_to_task2 = 0, has_sended_to_task3 = 0, has_sended_to_task4 = 0,
             has_sended_to_task5 = 0, has_sended_to_task7 = 0;
-
-        if (hf_comm_create(hf_selfid(), TASK_1.port, 0))
-                panic(0xff);
 
         while (1)
         {
@@ -94,14 +91,11 @@ void task2(void)
         int has_received_from_task1 = 0;
         int has_sended_to_task6 = 0, has_sended_to_task7 = 0, has_sended_to_task8 = 0;
 
-        if (hf_comm_create(hf_selfid(), TASK_2.port, 0))
-                panic(0xff);
-
         while (1)
         {
                 int received_channel = receive_message(TASK_2);
 
-                has_received_from_task1 = check_port(received_channel, TASK_1.channel);
+                has_received_from_task1 = check_port(received_channel, TASK_1.port);
 
                 if (has_received_from_task1)
                 {
@@ -109,7 +103,6 @@ void task2(void)
                         // has_sended_to_task7 = check_and_send(has_sended_to_task7, TASK_2, TASK_7);
                         // has_sended_to_task8 = check_and_send(has_sended_to_task8, TASK_2, TASK_8);
                 }
-                delay_ms(10);
         }
 }
 
@@ -125,14 +118,13 @@ void task3(void)
         {
                 int received_port = receive_message(TASK_3);
 
-                has_received_from_task1 = check_port(received_port, TASK_1.channel);
+                has_received_from_task1 = check_port(received_port, TASK_1.port);
 
                 if (has_received_from_task1)
                 {
                         has_sended_to_task7 = check_and_send(has_sended_to_task7, TASK_3, TASK_7);
                         has_sended_to_task8 = check_and_send(has_sended_to_task8, TASK_3, TASK_8);
                 }
-                delay_ms(10);
         }
 }
 
@@ -148,13 +140,12 @@ void task4(void)
         {
                 int received_port = receive_message(TASK_4);
 
-                has_received_from_task1 = check_port(received_port, TASK_1.channel);
+                has_received_from_task1 = check_port(received_port, TASK_1.port);
 
                 if (has_received_from_task1)
                 {
                         has_sended_to_task8 = check_and_send(has_sended_to_task8, TASK_4, TASK_8);
                 }
-                delay_ms(10);
         }
 }
 
@@ -170,7 +161,7 @@ void task5(void)
         {
                 int received_port = receive_message(TASK_5);
 
-                has_received_from_task1 = check_port(received_port, TASK_1.channel);
+                has_received_from_task1 = check_port(received_port, TASK_1.port);
 
                 if (has_received_from_task1)
                 {
@@ -184,20 +175,16 @@ void task6(void)
         int has_received_from_task2 = 0;
         int has_sended_to_task9 = 0;
 
-        if (hf_comm_create(hf_selfid(), TASK_6.port, 0))
-                panic(0xff);
-
         while (1)
         {
                 int received_port = receive_message(TASK_6);
 
-                has_received_from_task2 = check_port(received_port, TASK_2.channel);
+                has_received_from_task2 = check_port(received_port, TASK_2.port);
 
                 if (has_received_from_task2)
                 {
                         has_sended_to_task9 = check_and_send(has_sended_to_task9, TASK_6, TASK_9);
                 }
-                delay_ms(10);
         }
 }
 
@@ -213,15 +200,14 @@ void task7(void)
         {
                 int received_port = receive_message(TASK_7);
 
-                has_received_from_task1 = check_port(received_port, TASK_1.channel);
-                has_received_from_task2 = check_port(received_port, TASK_2.channel);
-                has_received_from_task3 = check_port(received_port, TASK_3.channel);
+                has_received_from_task1 = check_port(received_port, TASK_1.port);
+                has_received_from_task2 = check_port(received_port, TASK_2.port);
+                has_received_from_task3 = check_port(received_port, TASK_3.port);
 
                 if (has_received_from_task1 && has_received_from_task2 && has_received_from_task3)
                 {
                         has_sended_to_task9 = check_and_send(has_sended_to_task9, TASK_7, TASK_9);
                 }
-                delay_ms(10);
         }
 }
 
@@ -238,10 +224,10 @@ void task8(void)
         {
                 int received_port = receive_message(TASK_8);
 
-                has_received_from_task2 = check_port(received_port, TASK_2.channel);
-                has_received_from_task3 = check_port(received_port, TASK_3.channel);
-                has_received_from_task4 = check_port(received_port, TASK_4.channel);
-                has_received_from_task5 = check_port(received_port, TASK_5.channel);
+                has_received_from_task2 = check_port(received_port, TASK_2.port);
+                has_received_from_task3 = check_port(received_port, TASK_3.port);
+                has_received_from_task4 = check_port(received_port, TASK_4.port);
+                has_received_from_task5 = check_port(received_port, TASK_5.port);
 
                 if (has_received_from_task2 &&
                     has_received_from_task3 &&
@@ -250,7 +236,6 @@ void task8(void)
                 {
                         has_sended_to_task9 = check_and_send(has_sended_to_task9, TASK_8, TASK_9);
                 }
-                delay_ms(10);
         }
 }
 
@@ -258,22 +243,20 @@ void task9(void)
 {
         int has_received_from_task6 = 0, has_received_from_task7 = 0, has_received_from_task8 = 0;
 
-        if (hf_comm_create(hf_selfid(), TASK_9.port, 0))
-                panic(0xff);
+        printf("Listening on port %d\n", TASK_9.port);
 
         while (1)
         {
                 int received_port = receive_message(TASK_9);
 
-                has_received_from_task6 = check_port(received_port, TASK_6.channel);
-                has_received_from_task7 = check_port(received_port, TASK_7.channel);
-                has_received_from_task8 = check_port(received_port, TASK_8.channel);
+                has_received_from_task6 = check_port(received_port, TASK_6.port);
+                has_received_from_task7 = check_port(received_port, TASK_7.port);
+                has_received_from_task8 = check_port(received_port, TASK_8.port);
 
                 if (has_received_from_task6 && has_received_from_task7 && has_received_from_task8)
                 {
                         printf("Network completed.\n");
                 }
-                delay_ms(10);
         }
 }
 
@@ -281,11 +264,13 @@ void app_main(void)
 {
         if (hf_cpuid() == TASK_1.cpu)
         {
-                hf_spawn(task1, 0, 0, 0, "task1", 4096);
+                int task_id = hf_spawn(task1, 4, 1, 4, "task1", 4096);
+                hf_comm_create(task_id, TASK_1.port, 0);
         }
         if (hf_cpuid() == TASK_2.cpu)
         {
-                hf_spawn(task2, 0, 0, 0, "task2", 4096);
+                int task_id = hf_spawn(task2, 4, 1, 4, "task2", 4096);
+                hf_comm_create(task_id, TASK_2.port, 0);
         }
         // if (hf_cpuid() == TASK_3.cpu)
         // {
@@ -301,7 +286,9 @@ void app_main(void)
         // }
         if (hf_cpuid() == TASK_6.cpu)
         {
-                hf_spawn(task6, 0, 0, 0, "task6", 4096);
+                int task_id = hf_spawn(task6, 4, 1, 4, "task6", 4096);
+                hf_comm_create(task_id, TASK_6.port, 0);
+
         }
         // if (hf_cpuid() == TASK_7.cpu)
         // {
@@ -313,6 +300,7 @@ void app_main(void)
         // }
         if (hf_cpuid() == TASK_9.cpu)
         {
-                hf_spawn(task9, 0, 0, 0, "task9", 4096);
+                int task_id = hf_spawn(task9, 4, 1, 4, "task9", 4096);
+                hf_comm_create(task_id, TASK_9.port, 0);
         }
 }
