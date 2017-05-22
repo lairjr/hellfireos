@@ -19,6 +19,7 @@ dump-single-core: simulator single-core-image
 	docker run -v $(FOLDER_PATH):/hellfireos -w /hellfireos/platform/single_core --name singlecore --rm -t -i hellfire ../../usr/sim/hf_risc_sim/hf_risc_sim image.bin log_file.txt
 
 mpsoc-simulator:
+	rm -rf hellfireos/platform/noc_3x2/*.o hellfireos/platform/noc_3x2/*.bin hellfireos/platform/noc_3x2/*.cnt hellfireos/platform/noc_3x2/*.lst hellfireos/platform/noc_3x2/*.sec hellfireos/platform/noc_3x2/*.txt
 	docker run -v $(FOLDER_PATH):/hellfireos -w /hellfireos/usr/sim/mpsoc_sim -t -i hellfire make noc_3x2
 
 mpsoc-images:
