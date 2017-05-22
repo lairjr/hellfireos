@@ -5,25 +5,24 @@ struct task_info {
         int id;
         int cpu;
         int port;
-        int channel;
 };
 
-static struct task_info TASK_1 = { 1, 0, 60001, 1 };
-static struct task_info TASK_2 = { 2, 1, 60002, 2 };
-static struct task_info TASK_3 = { 3, 2, 60003, 3 };
-static struct task_info TASK_4 = { 4, 3, 60004, 4 };
-static struct task_info TASK_5 = { 5, 4, 60005, 5 };
-static struct task_info TASK_6 = { 6, 5, 60006, 6 };
-static struct task_info TASK_7 = { 7, 0, 60007, 7 };
-static struct task_info TASK_8 = { 8, 0, 60008, 8 };
-static struct task_info TASK_9 = { 9, 2, 60009, 9 };
+static struct task_info TASK_1 = { 1, 0, 60001 };
+static struct task_info TASK_2 = { 2, 1, 60002 };
+static struct task_info TASK_3 = { 3, 2, 60003 };
+static struct task_info TASK_4 = { 4, 3, 60004 };
+static struct task_info TASK_5 = { 5, 4, 60005 };
+static struct task_info TASK_6 = { 6, 5, 60006 };
+static struct task_info TASK_7 = { 7, 0, 60007 };
+static struct task_info TASK_8 = { 8, 0, 60008 };
+static struct task_info TASK_9 = { 9, 2, 60009 };
 
 static int send_message(struct task_info origin, struct task_info dest)
 {
         int8_t buf[1500];
         uint16_t send_ack;
 
-        send_ack = hf_sendack(dest.cpu, dest.port, buf, sizeof(buf), dest.channel, 500);
+        send_ack = hf_sendack(dest.cpu, dest.port, buf, sizeof(buf), 0, 500);
         if (send_ack)
                 printf("task %d FAILED to transmit to task %d on CPU %d with error: %d\n", origin.id, dest.id, dest.cpu, send_ack);
         else
@@ -48,7 +47,7 @@ static int receive_message(struct task_info origin)
         int8_t buf[1500];
         uint16_t cpu, receive_port, size, receive_ack;
 
-        receive_ack = hf_recvack(&cpu, &receive_port, buf, &size, origin.channel);
+        receive_ack = hf_recvack(&cpu, &receive_port, buf, &size, 0);
 
         if (receive_ack)
                 printf("hf_recvack(): error %d\n", receive_ack);
