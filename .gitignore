@@ -6,4 +6,6 @@
 **/*.map
 **/*.sec
 **/*.txt
+hellfireos/usr/image_processing/create_bmp
+hellfireos/usr/image_processing/create_image
 hellfireos/usr/sim/hf_risc_sim/hf_risc_sim

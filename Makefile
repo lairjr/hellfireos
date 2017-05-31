@@ -28,5 +28,10 @@ mpsoc: mpsoc-simulator mpsoc-images
 	cp hellfireos/platform/noc_3x2/*.bin hellfireos/usr/sim/mpsoc_sim/objects/
 	docker run -v $(FOLDER_PATH):/hellfireos -w /hellfireos/usr/sim/mpsoc_sim -t -i hellfire ./mpsoc_sim 3 s
 
+compile-image-tools:
+	rm -rf hellfireos/usr/image_processing/create_bmp hellfireos/usr/image_processing/create_image
+	docker run -v $(FOLDER_PATH):/hellfireos -w /hellfireos/usr/image_processing -t -i hellfire gcc create_bmp.c -o create_bmp
+	docker run -v $(FOLDER_PATH):/hellfireos -w /hellfireos/usr/image_processing -t -i hellfire gcc create_image.c -o create_image
+
 stop:
 	docker stop $$(docker ps -f "name=singlecore" --format="{{.ID}}")
