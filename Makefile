@@ -33,5 +33,9 @@ compile-image-tools:
 	docker run -v $(FOLDER_PATH):/hellfireos -w /hellfireos/usr/image_processing -t -i hellfire gcc create_bmp.c -o create_bmp
 	docker run -v $(FOLDER_PATH):/hellfireos -w /hellfireos/usr/image_processing -t -i hellfire gcc create_image.c -o create_image
 
+image-bytes:
+	rm -rf hellfireos/usr/image_processing/create_bmp hellfireos/usr/image_processing/filter_image.h
+	docker run -v $(FOLDER_PATH):/hellfireos -w /hellfireos/usr/image_processing -t -i hellfire ./create_image processing.bmp > $(FOLDER_PATH)/usr/image_processing/filter_image.h
+
 stop:
 	docker stop $$(docker ps -f "name=singlecore" --format="{{.ID}}")
