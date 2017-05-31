@@ -30,5 +30,3 @@ mpsoc: mpsoc-simulator mpsoc-images
 
 stop:
 	docker stop $$(docker ps -f "name=singlecore" --format="{{.ID}}")
-image:
-	docker build -t hellfire .
