@@ -1,4 +1,4 @@
-APP = app/noc_test3
+APP = app/noc_img_filter
 ARCH = mips/plasma
 
 CPU_ARCH = \"$(ARCH)\"
@@ -24,7 +24,7 @@ CORE := 0
 CORE_LIST = 0 1 2 3 4 5 6 7 8
 NOC_FLAGS = -DNOC_INTERCONNECT -DNOC_WIDTH=3 -DNOC_HEIGHT=3 -DNOC_PACKET_SIZE=64 -DNOC_PACKET_SLOTS=64
 
-images: 
+images:
 	make hal
 	make libc
 	for i in $(CORE_LIST) ; do \
@@ -43,4 +43,3 @@ images:
 
 clean:
 	rm -rf *.o *~ *.elf *.bin *.cnt *.lst *.sec *.txt
-
