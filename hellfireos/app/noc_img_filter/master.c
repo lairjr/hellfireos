@@ -7,17 +7,20 @@
 
 void distribute_gausin_tasks(int32_t width, int32_t height)
 {
-        int32_t y, x;
-        int32_t i = 0;
+        int32_t y, x, image_index;
+        int32_t i = 1;
         int16_t val;
-        int16_t buffer[TASK_IMAGE_SIZE * TASK_IMAGE_SIZE];
+        uint16_t buffer[MESSAGE_SIZE];
 
+        buffer[0] = GAUSIAN;
+        image_index = 0;
         for (y = 0; y < height; y++)
         {
                 for (x = 0; x < width; x++)
                 {
-                        buffer[i] = image[i];
+                        buffer[i] = image[image_index];
                         i++;
+                        image_index++;
                 }
         }
 
@@ -38,8 +41,7 @@ void master_task(void)
 {
         uint32_t i = 0;
         uint8_t *img;
-        int16_t message[MESSAGE_SIZE];
-        int8_t * message_content;
+        uint16_t message[MESSAGE_SIZE];
         int8_t message_type;
         int16_t val;
         uint16_t cpu, task, size;
@@ -71,7 +73,6 @@ void master_task(void)
                         else
                         {
                                 printf("RECEBEU %d!\n", size);
-                                //message_content = get_content(message);
                                 int a;
                                 for (a = 0; a < 1024; a++) {
                                         printf("%x \n", message[a]);
