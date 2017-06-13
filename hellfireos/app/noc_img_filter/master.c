@@ -18,17 +18,12 @@ void distribute_gausin_tasks(int32_t width, int32_t height)
         {
                 for (x = 0; x < width; x++)
                 {
-                        buffer[i] = image[image_index];
+                        buffer[i] = image[(y * image_width) + image_index];
                         i++;
                         image_index++;
                 }
         }
 
-        printf("Stack BUFFER!\n");
-        int a;
-        for (a = 0; a < (TASK_IMAGE_SIZE * TASK_IMAGE_SIZE); a++) {
-                printf("%x \n", buffer[a]);
-        }
         val = hf_sendack(1, 5000, buffer, sizeof(buffer), 1, 500);
         if (val) {
                 printf("hf_sendack(): error %d\n", val);

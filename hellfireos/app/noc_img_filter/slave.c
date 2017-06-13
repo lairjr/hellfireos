@@ -28,11 +28,7 @@ void slave_task(void)
                                 message_type = get_process_type(message_buffer);
                                 printf("Message type (%d)\n", message_type);
                                 message_content = get_content(message_buffer);
-                                int a;
-                                for (a = 0; a < 1024; a++) {
-                                        printf("%x \n", message_content[a]);
 
-                                }
                                 val = hf_sendack(0, 5000, message_buffer, sizeof(message_buffer), 1, 500);
                                 if (val) {
                                         printf("hf_sendack(): error %d\n", val);
