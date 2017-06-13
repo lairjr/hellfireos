@@ -1,6 +1,7 @@
 #define TASK_IMAGE_SIZE 32
 #include <hellfire.h>
 #include <noc.h>
+#include "image.h"
 #include "master.h"
 
 void distribute_gausin_tasks(uint8_t *img, int32_t width, int32_t height)
@@ -8,26 +9,30 @@ void distribute_gausin_tasks(uint8_t *img, int32_t width, int32_t height)
         int32_t y, x;
         int32_t i = 0;
         int16_t val;
+        int8_t buffer[TASK_IMAGE_SIZE * TASK_IMAGE_SIZE];
 
         for (y = 0; y < height; y++)
         {
                 for (x = 0; x < width; x++)
                 {
-                        int8_t buffer[TASK_IMAGE_SIZE * TASK_IMAGE_SIZE];
 
-                        buffer[i] = img[((y * width) + x)];
-                        if (i == (TASK_IMAGE_SIZE * TASK_IMAGE_SIZE) - 1)
-                        {
-                                i = 0;
-                                val = hf_sendack(1, 5000, buffer, sizeof(buffer), 1, 500);
-                                if (val) {
-                                        printf("hf_sendack(): error %d\n", val);
-                                } else {
-                                        printf("enviou para outra task");
-                                }
-                        }
+                        buffer[i] = image[i];
                         i++;
                 }
+        }
+
+        printf("Vai enviar!\n");
+        int b;
+        for (b = 0; b < (TASK_IMAGE_SIZE * TASK_IMAGE_SIZE); b++)
+        {
+                printf("0x%x, ", buffer[b]);
+        }
+
+        val = hf_sendack(1, 5000, buffer, sizeof(buffer), 1, 500);
+        if (val) {
+                printf("hf_sendack(): error %d\n", val);
+        } else {
+                printf("enviou para outra task");
         }
 }
 
