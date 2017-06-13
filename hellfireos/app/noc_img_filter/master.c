@@ -10,7 +10,7 @@ void distribute_gausin_tasks(int32_t width, int32_t height)
         int32_t y, x, image_index;
         int32_t i = 1;
         int16_t val;
-        uint16_t buffer[MESSAGE_SIZE];
+        int8_t buffer[MESSAGE_SIZE];
 
         buffer[0] = GAUSIAN;
         image_index = 0;
@@ -36,7 +36,7 @@ void master_task(void)
 {
         uint32_t i = 0;
         uint8_t *img;
-        uint16_t message[MESSAGE_SIZE];
+        int8_t message[MESSAGE_SIZE];
         int8_t message_type;
         int16_t val;
         uint16_t cpu, task, size;
@@ -58,7 +58,7 @@ void master_task(void)
 
                 time = _readcounter() - time;
 
-                delay_ms(500);
+                delay_ms(50);
                 i = hf_recvprobe();
                 if (i >= 0) {
                         printf("TESTE %d\n", i);
@@ -67,11 +67,7 @@ void master_task(void)
                                 printf("hf_recvack(): error %d\n", val);
                         else
                         {
-                                printf("RECEBEU %d!\n", size);
-                                int a;
-                                for (a = 0; a < 1024; a++) {
-                                        printf("%x \n", message[a]);
-                                }
+                                printf("Received");
                         }
                 }
 

@@ -3,5 +3,5 @@
 #define GAUSIAN 1
 #define SOBEL 2
 
-uint16_t * get_content(uint16_t * message);
-uint8_t * get_process_type(uint16_t * message);
+int8_t * get_content(int8_t * message);
+int8_t * get_process_type(int8_t * message);

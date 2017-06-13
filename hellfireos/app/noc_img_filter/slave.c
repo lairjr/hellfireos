@@ -2,11 +2,12 @@
 #include <hellfire.h>
 #include <noc.h>
 #include "slave.h"
+#include "process_info.h"
 
 void slave_task(void)
 {
-        uint16_t * message_content;
-        uint16_t message_buffer[TASK_IMAGE_SIZE * TASK_IMAGE_SIZE];
+        int8_t * message_content;
+        int8_t message_buffer[MESSAGE_SIZE];
         uint8_t message_type;
         uint16_t cpu, task, size;
         int16_t val;
