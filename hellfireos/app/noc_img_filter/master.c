@@ -13,9 +13,9 @@ void distribute_gausin_tasks(int32_t width, int32_t height)
         int8_t buffer[MESSAGE_SIZE];
 
         buffer[0] = GAUSIAN;
-        image_index = 0;
         for (y = 0; y < height; y++)
         {
+                image_index = 0;
                 for (x = 0; x < width; x++)
                 {
                         buffer[i] = image[(y * image_width) + image_index];
@@ -37,7 +37,6 @@ void master_task(void)
         uint32_t i = 0;
         uint8_t *img;
         int8_t message[MESSAGE_SIZE];
-        int8_t message_type;
         int16_t val;
         uint16_t cpu, task, size;
         uint32_t time;

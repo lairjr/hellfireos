@@ -6,7 +6,6 @@
 
 void slave_task(void)
 {
-        int8_t * message_content;
         int8_t message_buffer[MESSAGE_SIZE];
         uint8_t message_type;
         uint16_t cpu, task, size;
@@ -24,11 +23,10 @@ void slave_task(void)
                                 printf("hf_recvack(): error %d\n", val);
                         else
                         {
-                                // do_gausian(message_buffer, 32, 32);
                                 printf("Recebeu o message_buffer (%d)\n", size);
                                 message_type = get_process_type(message_buffer);
                                 printf("Message type (%d)\n", message_type);
-                                message_content = get_content(message_buffer);
+                                int8_t * message_content = get_content(message_buffer);
 
                                 val = hf_sendack(0, 5000, message_buffer, sizeof(message_buffer), 1, 500);
                                 if (val) {

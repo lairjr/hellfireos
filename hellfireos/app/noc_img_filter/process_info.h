@@ -4,4 +4,4 @@
 #define SOBEL 2
 
 int8_t * get_content(int8_t * message);
-int8_t * get_process_type(int8_t * message);
+int8_t get_process_type(int8_t * message);
