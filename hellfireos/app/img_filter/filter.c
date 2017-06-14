@@ -65,7 +65,7 @@ uint8_t sobel(uint8_t buffer[3][3]){
         return (uint8_t)sum;
 }
 
-void do_gausian(uint8_t *img, int32_t width, int32_t height){
+void do_gausian(uint8_t *img, int32_t width, int32_t height) {
         int32_t i, j, k, l;
         uint8_t image_buf[5][5];
 

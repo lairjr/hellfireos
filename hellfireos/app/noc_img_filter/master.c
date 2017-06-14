@@ -12,7 +12,6 @@ void distribute_gausin_tasks(int32_t width, int32_t height)
         int16_t val;
         int8_t buffer[MESSAGE_SIZE];
 
-        buffer[0] = GAUSIAN;
         for (y = 0; y < height; y++)
         {
                 image_index = 0;
@@ -57,7 +56,7 @@ void master_task(void)
 
                 time = _readcounter() - time;
 
-                delay_ms(50);
+                delay_ms(100);
                 i = hf_recvprobe();
                 if (i >= 0) {
                         printf("TESTE %d\n", i);

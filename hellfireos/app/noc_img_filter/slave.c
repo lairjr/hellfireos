@@ -2,6 +2,7 @@
 #include <hellfire.h>
 #include <noc.h>
 #include "slave.h"
+#include "image_filter.h"
 #include "process_info.h"
 
 void slave_task(void)
@@ -27,6 +28,8 @@ void slave_task(void)
                                 message_type = get_process_type(message_buffer);
                                 printf("Message type (%d)\n", message_type);
                                 int8_t * message_content = get_content(message_buffer);
+
+                                message_content = do_gausian(message_content, 32, 32);
 
                                 val = hf_sendack(0, 5000, message_buffer, sizeof(message_buffer), 1, 500);
                                 if (val) {
