@@ -4,23 +4,30 @@
 #include "process_info.h"
 #include "image.h"
 
-void distribute_tasks()
+int8_t * create_buffer(int pos_x, int pos_y, int8_t * buffer)
 {
-        int32_t y, x, image_index;
         int32_t i = 1;
-        int16_t val;
-        int8_t buffer[MESSAGE_SIZE];
+        int end_y = pos_y + TASK_IMAGE_SIZE;
+        int end_x = pos_x + TASK_IMAGE_SIZE;
 
-        for (y = 0; y < TASK_IMAGE_SIZE; y++)
+        for (pos_y; pos_y < end_y; pos_y++)
         {
-                image_index = 0;
-                for (x = 0; x < TASK_IMAGE_SIZE; x++)
+                int image_index = pos_x;
+                for (pos_x; pos_x < end_x; pos_x++)
                 {
-                        buffer[i] = image[(y * image_width) + image_index];
+                        buffer[i] = image[(pos_y * image_width) + image_index];
                         i++;
                         image_index++;
                 }
         }
+}
+
+void distribute_tasks()
+{
+        int16_t val;
+        int8_t buffer[MESSAGE_SIZE];
+
+        create_buffer(0, 0, buffer);
 
         val = hf_sendack(1, 5000, buffer, sizeof(buffer), 1, 500);
         if (val) {
@@ -45,6 +52,11 @@ void receive_tasks()
                 else
                 {
                         printf("Received");
+                        int x;
+                        for (x = 0; x < MESSAGE_SIZE; x++)
+                        {
+                                printf("%x ", message[x]);
+                        }
                 }
         }
 }
