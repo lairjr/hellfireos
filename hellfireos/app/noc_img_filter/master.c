@@ -32,6 +32,8 @@ void receive_tasks()
                         else
                         {
                                 printf("\nReceived from CPU %d \n", cpu);
+                                received_tasks++;
+
                                 int x;
                                 for (x = 0; x < MESSAGE_SIZE; x++)
                                 {
