@@ -40,13 +40,6 @@ void slave_task(void)
                                 {
                                         printf("%x ", send_msg_buffer[x]);
                                 }
-
-                                val = hf_sendack(0, 5000, send_msg_buffer, sizeof(send_msg_buffer), 1, 500);
-                                if (val) {
-                                        printf("hf_sendack(): error %d\n", val);
-                                } else {
-                                        printf("processador respondeu!");
-                                }
                         }
                 }
         }

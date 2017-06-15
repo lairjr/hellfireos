@@ -56,11 +56,12 @@ void distribute_tasks()
                                 messages[message_index].pos_y = y;
                                 message_index++;
 
+                                cpu++;
                                 if (cpu > 8) {
                                         cpu = 1;
-                                        delay_ms(500);
+                                        printf("waiting\n");
+                                        delay_ms(700);
                                 }
-                                cpu++;
                         }
                 }
         }
