@@ -30,13 +30,28 @@ void distribute_tasks()
         }
 }
 
-void master_task(void)
+void receive_tasks()
 {
         uint32_t i = 0;
-        uint8_t *img;
+        uint16_t cpu, task, size;
         int8_t message[MESSAGE_SIZE];
         int16_t val;
-        uint16_t cpu, task, size;
+
+        i = hf_recvprobe();
+        if (i >= 0) {
+                val = hf_recvack(&cpu, &task, message, &size, i);
+                if (val)
+                        printf("hf_recvack(): error %d\n", val);
+                else
+                {
+                        printf("Received");
+                }
+        }
+}
+
+void master_task(void)
+{
+        uint8_t *img;
         uint32_t time;
 
         if (hf_comm_create(hf_selfid(), 5000, 0))
@@ -56,17 +71,8 @@ void master_task(void)
                 time = _readcounter() - time;
 
                 delay_ms(200);
-                i = hf_recvprobe();
-                if (i >= 0) {
-                        printf("TESTE %d\n", i);
-                        val = hf_recvack(&cpu, &task, message, &size, i);
-                        if (val)
-                                printf("hf_recvack(): error %d\n", val);
-                        else
-                        {
-                                printf("Received");
-                        }
-                }
+
+                receive_tasks();
 
                 free(img);
 
