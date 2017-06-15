@@ -31,6 +31,7 @@ void slave_task(void)
                                 int8_t * message_content = get_content(receive_msg_buffer);
 
                                 message_content = do_gausian(message_content, 32, 32);
+                                message_content = do_sobel(message_content, 32, 32);
 
                                 set_process_type(send_msg_buffer, GAUSIAN);
                                 set_content(send_msg_buffer, message_content);

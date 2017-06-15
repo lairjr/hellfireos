@@ -5,7 +5,7 @@
 #include "process_info.h"
 #include "image.h"
 
-void distribute_gausin_tasks(int32_t width, int32_t height)
+void distribute_tasks(int32_t width, int32_t height)
 {
         int32_t y, x, image_index;
         int32_t i = 1;
@@ -52,11 +52,11 @@ void master_task(void)
 
                 time = _readcounter();
 
-                distribute_gausin_tasks(32, 32);
+                distribute_tasks(32, 32);
 
                 time = _readcounter() - time;
 
-                delay_ms(100);
+                delay_ms(200);
                 i = hf_recvprobe();
                 if (i >= 0) {
                         printf("TESTE %d\n", i);

@@ -57,3 +57,69 @@ int8_t * do_gausian(int8_t * image, int8_t height, int8_t width)
 
         return image;
 }
+
+
+int32_t isqrt(int32_t a){
+        int32_t i, rem = 0, root = 0, divisor = 0;
+
+        for (i = 0; i < 16; i++) {
+                root <<= 1;
+                rem = ((rem << 2) + (a >> 30));
+                a <<= 2;
+                divisor = (root << 1) + 1;
+                if (divisor <= rem) {
+                        rem -= divisor;
+                        root++;
+                }
+        }
+        return root;
+}
+
+int8_t sobel(int8_t * buffer){
+        int32_t sum = 0, gx = 0, gy = 0;
+        int8_t i, j;
+
+        int16_t kernelx[3][3] = {
+                {-1, 0, 1},
+                {-2, 0, 2},
+                {-1, 0, 1}
+        };
+        int16_t kernely[3][3] = {
+                {-1, -2, -1},
+                {0, 0, 0},
+                {1, 2, 1}
+        };
+        for (i = 0; i < 3; i++) {
+                for (j = 0; j < 3; j++) {
+                        gx += ((int32_t)buffer[(i * 3) + j] * (int32_t)kernelx[i][j]);
+                        gy += ((int32_t)buffer[(i * 3) + j] * (int32_t)kernely[i][j]);
+                }
+        }
+
+        sum = isqrt(gy * gy + gx * gx);
+
+        if (sum > 255) sum = 255;
+        if (sum < 0) sum = 0;
+
+        return (int8_t)sum;
+}
+
+int8_t * do_sobel(int8_t * image, int8_t height, int8_t width)
+{
+        int image_vertical, image_horizontal = 0;
+        int border = 1;
+
+        for (image_vertical = border; image_vertical < (height - border); image_vertical++)
+        {
+                for (image_horizontal = border; image_horizontal < (width - border); image_horizontal++)
+                {
+                        int8_t image_slice[9];
+
+                        get_image_slice_from_center_point(image, image_horizontal, image_vertical, border, image_slice);
+
+                        image[(image_vertical * height) + image_horizontal] = sobel(image_slice);
+                }
+        }
+
+        return image;
+}
