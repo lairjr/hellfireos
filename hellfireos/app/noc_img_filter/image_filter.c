@@ -1,4 +1,5 @@
 #include <hellfire.h>
+#include "process_info.h"
 
 int8_t gausian(int8_t * buffer){
         int32_t sum = 0, mpixel;
@@ -32,7 +33,7 @@ void get_image_slice_from_center_point(int8_t * image, int x, int y, int border,
         {
                 for (image_horizontal = initial_x; image_horizontal < end_x; image_horizontal++)
                 {
-                        image_slice[slice_index] = image[(image_vertical * 32) + image_horizontal];
+                        image_slice[slice_index] = image[(image_vertical * TASK_IMAGE_SIZE) + image_horizontal];
                         slice_index++;
                 }
         }

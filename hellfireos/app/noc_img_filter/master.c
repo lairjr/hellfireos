@@ -1,21 +1,20 @@
-#define TASK_IMAGE_SIZE 32
 #include <hellfire.h>
 #include <noc.h>
 #include "master.h"
 #include "process_info.h"
 #include "image.h"
 
-void distribute_tasks(int32_t width, int32_t height)
+void distribute_tasks()
 {
         int32_t y, x, image_index;
         int32_t i = 1;
         int16_t val;
         int8_t buffer[MESSAGE_SIZE];
 
-        for (y = 0; y < height; y++)
+        for (y = 0; y < TASK_IMAGE_SIZE; y++)
         {
                 image_index = 0;
-                for (x = 0; x < width; x++)
+                for (x = 0; x < TASK_IMAGE_SIZE; x++)
                 {
                         buffer[i] = image[(y * image_width) + image_index];
                         i++;
@@ -44,7 +43,7 @@ void master_task(void)
                 panic(0xff);
 
         while(1) {
-                img = (uint8_t *) malloc(312 * 234);
+                img = (uint8_t *) malloc(image_width * image_height);
                 if (img == NULL) {
                         printf("\nmalloc() failed!\n");
                         for(;; ) ;
@@ -52,7 +51,7 @@ void master_task(void)
 
                 time = _readcounter();
 
-                distribute_tasks(32, 32);
+                distribute_tasks();
 
                 time = _readcounter() - time;
 

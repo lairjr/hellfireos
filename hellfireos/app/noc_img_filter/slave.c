@@ -1,4 +1,3 @@
-#define TASK_IMAGE_SIZE 32
 #include <hellfire.h>
 #include <noc.h>
 #include "slave.h"
@@ -30,8 +29,8 @@ void slave_task(void)
                                 printf("Message type (%d)\n", message_type);
                                 int8_t * message_content = get_content(receive_msg_buffer);
 
-                                message_content = do_gausian(message_content, 32, 32);
-                                message_content = do_sobel(message_content, 32, 32);
+                                message_content = do_gausian(message_content, TASK_IMAGE_SIZE, TASK_IMAGE_SIZE);
+                                message_content = do_sobel(message_content, TASK_IMAGE_SIZE, TASK_IMAGE_SIZE);
 
                                 set_process_type(send_msg_buffer, GAUSIAN);
                                 set_content(send_msg_buffer, message_content);
