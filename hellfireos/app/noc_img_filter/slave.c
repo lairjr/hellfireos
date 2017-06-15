@@ -26,7 +26,7 @@ void slave_task(void)
                         {
                                 printf("Recebeu o receive_msg_buffer (%d)\n", size);
                                 message_type = get_process_type(receive_msg_buffer);
-                                printf("Message type (%d)\n", message_type);
+                                printf("Message id (%d)\n", message_type);
                                 int8_t * message_content = get_content(receive_msg_buffer);
 
                                 message_content = do_gausian(message_content, TASK_IMAGE_SIZE, TASK_IMAGE_SIZE);
@@ -34,6 +34,12 @@ void slave_task(void)
 
                                 set_process_type(send_msg_buffer, GAUSIAN);
                                 set_content(send_msg_buffer, message_content);
+
+                                int x;
+                                for (x = 0; x < MESSAGE_SIZE; x++)
+                                {
+                                        printf("%x ", send_msg_buffer[x]);
+                                }
 
                                 val = hf_sendack(0, 5000, send_msg_buffer, sizeof(send_msg_buffer), 1, 500);
                                 if (val) {

@@ -4,6 +4,15 @@
 #include "process_info.h"
 #include "image.h"
 
+struct message
+{
+        int8_t id;
+        int pos_x;
+        int pos_y;
+};
+
+struct message messages[500];
+
 int8_t * create_buffer(int pos_x, int pos_y, int8_t * buffer)
 {
         int32_t i = 1;
@@ -24,16 +33,36 @@ int8_t * create_buffer(int pos_x, int pos_y, int8_t * buffer)
 
 void distribute_tasks()
 {
-        int16_t val;
-        int8_t buffer[MESSAGE_SIZE];
+        int x, y, message_index = 0;
+        int16_t cpu = 1;
 
-        create_buffer(0, 0, buffer);
+        for (y = 0; y < image_height; y + TASK_IMAGE_SIZE)
+        {
+                for (x = 0; x < image_height; x + TASK_IMAGE_SIZE)
+                {
+                        int16_t val;
+                        int8_t buffer[MESSAGE_SIZE];
 
-        val = hf_sendack(1, 5000, buffer, sizeof(buffer), 1, 500);
-        if (val) {
-                printf("hf_sendack(): error %d\n", val);
-        } else {
-                printf("enviou para outra task");
+                        buffer[0] = message_index;
+                        create_buffer(x, y, buffer);
+
+                        val = hf_sendack(cpu, 5000, buffer, sizeof(buffer), 1, 500);
+                        if (val) {
+                                printf("hf_sendack(): error %d\n", val);
+                        } else {
+                                printf("enviou para outra task no CPU %d\n", cpu);
+                                messages[message_index].id = message_index;
+                                messages[message_index].pos_x = x;
+                                messages[message_index].pos_y = y;
+                                message_index++;
+
+                                if (cpu > 8) {
+                                        cpu = 1;
+                                        delay_ms(500);
+                                }
+                                cpu++;
+                        }
+                }
         }
 }
 
