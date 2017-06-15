@@ -13,6 +13,37 @@ struct message
 
 struct message messages[500];
 
+void receive_tasks()
+{
+        int received_tasks = 0;
+
+        while (received_tasks < 8)
+        {
+                uint32_t i = 0;
+                uint16_t cpu, task, size;
+                int8_t message[MESSAGE_SIZE];
+                int16_t val;
+
+                i = hf_recvprobe();
+                if (i >= 0) {
+                        val = hf_recvack(&cpu, &task, message, &size, i);
+                        if (val)
+                                printf("hf_recvack(): error %d\n", val);
+                        else
+                        {
+                                printf("\nReceived from CPU %d \n", cpu);
+                                int x;
+                                for (x = 0; x < MESSAGE_SIZE; x++)
+                                {
+                                        printf("%x ", message[x]);
+                                }
+
+                                free(message);
+                        }
+                }
+        }
+}
+
 int8_t * create_buffer(int pos_x, int pos_y, int8_t * buffer)
 {
         int32_t i = 1;
@@ -59,33 +90,10 @@ void distribute_tasks()
                                 cpu++;
                                 if (cpu > 8) {
                                         cpu = 1;
-                                        printf("waiting\n");
-                                        delay_ms(700);
+                                        printf("waiting to receive packets\n");
+                                        delay_ms(200);
+                                        receive_tasks();
                                 }
-                        }
-                }
-        }
-}
-
-void receive_tasks()
-{
-        uint32_t i = 0;
-        uint16_t cpu, task, size;
-        int8_t message[MESSAGE_SIZE];
-        int16_t val;
-
-        i = hf_recvprobe();
-        if (i >= 0) {
-                val = hf_recvack(&cpu, &task, message, &size, i);
-                if (val)
-                        printf("hf_recvack(): error %d\n", val);
-                else
-                {
-                        printf("Received");
-                        int x;
-                        for (x = 0; x < MESSAGE_SIZE; x++)
-                        {
-                                printf("%x ", message[x]);
                         }
                 }
         }

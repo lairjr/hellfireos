@@ -35,10 +35,17 @@ void slave_task(void)
                                 set_process_type(send_msg_buffer, GAUSIAN);
                                 set_content(send_msg_buffer, message_content);
 
-                                int x;
-                                for (x = 0; x < MESSAGE_SIZE; x++)
+                                if (hf_cpuid() >= 7)
                                 {
-                                        printf("%x ", send_msg_buffer[x]);
+                                        printf("\nWaiting...\n");
+                                        delay_ms(100);
+                                }
+
+                                val = hf_sendack(0, 5000, send_msg_buffer, sizeof(send_msg_buffer), 1, 500);
+                                if (val) {
+                                        printf("hf_sendack(): error %d\n", val);
+                                } else {
+                                        printf("processador respondeu!");
                                 }
                         }
                 }
