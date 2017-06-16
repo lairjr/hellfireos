@@ -8,7 +8,6 @@ void slave_task(void)
 {
         int8_t send_msg_buffer[MESSAGE_SIZE];
         int8_t receive_msg_buffer[MESSAGE_SIZE];
-        uint8_t message_type;
         uint16_t cpu, task, size;
         int16_t val;
         int32_t i;
@@ -25,14 +24,14 @@ void slave_task(void)
                         else
                         {
                                 printf("\nRecebeu o receive_msg_buffer (%d)\n", size);
-                                message_type = get_process_type(receive_msg_buffer);
-                                printf("Message id (%d)\n", message_type);
+                                int8_t message_index = get_message_index(receive_msg_buffer);
+                                printf("Message id (%d)\n", message_index);
                                 int8_t * message_content = get_content(receive_msg_buffer);
 
                                 message_content = do_gausian(message_content, TASK_IMAGE_SIZE, TASK_IMAGE_SIZE);
                                 message_content = do_sobel(message_content, TASK_IMAGE_SIZE, TASK_IMAGE_SIZE);
 
-                                set_process_type(send_msg_buffer, GAUSIAN);
+                                set_message_index(send_msg_buffer, message_index);
                                 set_content(send_msg_buffer, message_content);
 
                                 if (hf_cpuid() >= 7)

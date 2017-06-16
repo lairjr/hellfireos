@@ -6,12 +6,12 @@ int8_t * get_content(int8_t * message)
         return &message[1];
 }
 
-int8_t get_process_type(int8_t * message)
+int8_t get_message_index(int8_t * message)
 {
         return message[0];
 }
 
-void set_process_type(int8_t * message, int8_t type)
+void set_message_index(int8_t * message, int8_t type)
 {
         message[0] = type;
 }

@@ -13,6 +13,24 @@ struct message
 
 struct message messages[500];
 
+uint8_t * img;
+
+void replace_on_img(int pos_x, int pos_y, int8_t * content)
+{
+        int end_x = pos_x + TASK_IMAGE_SIZE;
+        int end_y = pos_y + TASK_IMAGE_SIZE;
+        int content_index = 0;
+
+        for (pos_y; pos_y < end_y; pos_y++)
+        {
+                for (pos_x; pos_x < end_x; pos_x++)
+                {
+                        img[(pos_y * image_width) + pos_x] = content[content_index];
+                        content_index++;
+                }
+        }
+}
+
 void receive_tasks()
 {
         int received_tasks = 0;
@@ -34,7 +52,13 @@ void receive_tasks()
                                 printf("\nReceived from CPU %d \n", cpu);
                                 received_tasks++;
 
-                                free(message);
+                                int8_t message_index = get_message_index(message);
+                                int8_t * message_content = get_content(message);
+
+                                int pos_x = messages[message_index].pos_x;
+                                int pos_y = messages[message_index].pos_y;
+
+                                replace_on_img(pos_x, pos_y, message_content);
                         }
                 }
         }
@@ -90,6 +114,14 @@ void distribute_tasks()
                                         printf("waiting to receive packets\n");
                                         delay_ms(200);
                                         receive_tasks();
+
+                                        int x;
+                                        printf("\n\n");
+                                        for (x = 0; x < (image_width * image_height); x++)
+                                        {
+                                                printf("0x%x, ", img[x]);
+                                        }
+                                        printf("\n\n");
                                 }
                         }
                 }
@@ -98,7 +130,6 @@ void distribute_tasks()
 
 void master_task(void)
 {
-        uint8_t *img;
         uint32_t time;
 
         if (hf_comm_create(hf_selfid(), 5000, 0))
