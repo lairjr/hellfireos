@@ -34,12 +34,6 @@ void receive_tasks()
                                 printf("\nReceived from CPU %d \n", cpu);
                                 received_tasks++;
 
-                                int x;
-                                for (x = 0; x < MESSAGE_SIZE; x++)
-                                {
-                                        printf("%x ", message[x]);
-                                }
-
                                 free(message);
                         }
                 }
@@ -66,12 +60,12 @@ int8_t * create_buffer(int pos_x, int pos_y, int8_t * buffer)
 
 void distribute_tasks()
 {
-        int x, y, message_index = 0;
+        int x, y, message_index = 1;
         int16_t cpu = 1;
 
-        for (y = 0; y < image_height; y + TASK_IMAGE_SIZE)
+        for (y = 0; y < image_height; y = y + TASK_IMAGE_SIZE)
         {
-                for (x = 0; x < image_height; x + TASK_IMAGE_SIZE)
+                for (x = 0; x < image_height; x = x + TASK_IMAGE_SIZE)
                 {
                         int16_t val;
                         int8_t buffer[MESSAGE_SIZE];
@@ -79,7 +73,8 @@ void distribute_tasks()
                         buffer[0] = message_index;
                         create_buffer(x, y, buffer);
 
-                        val = hf_sendack(cpu, 5000, buffer, sizeof(buffer), 1, 500);
+                        val = hf_sendack(cpu, 5000, buffer, sizeof(buffer), message_index, 500);
+
                         if (val) {
                                 printf("hf_sendack(): error %d\n", val);
                         } else {
@@ -121,10 +116,6 @@ void master_task(void)
                 distribute_tasks();
 
                 time = _readcounter() - time;
-
-                delay_ms(200);
-
-                receive_tasks();
 
                 free(img);
 

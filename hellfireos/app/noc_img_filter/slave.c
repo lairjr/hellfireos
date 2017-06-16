@@ -24,7 +24,7 @@ void slave_task(void)
                                 printf("hf_recvack(): error %d\n", val);
                         else
                         {
-                                printf("Recebeu o receive_msg_buffer (%d)\n", size);
+                                printf("\nRecebeu o receive_msg_buffer (%d)\n", size);
                                 message_type = get_process_type(receive_msg_buffer);
                                 printf("Message id (%d)\n", message_type);
                                 int8_t * message_content = get_content(receive_msg_buffer);
@@ -38,14 +38,14 @@ void slave_task(void)
                                 if (hf_cpuid() >= 7)
                                 {
                                         printf("\nWaiting...\n");
-                                        delay_ms(100);
+                                        delay_ms(40);
                                 }
 
-                                val = hf_sendack(0, 5000, send_msg_buffer, sizeof(send_msg_buffer), 1, 500);
+                                val = hf_sendack(0, 5000, send_msg_buffer, sizeof(send_msg_buffer), hf_cpuid(), 3000);
                                 if (val) {
                                         printf("hf_sendack(): error %d\n", val);
                                 } else {
-                                        printf("processador respondeu!");
+                                        printf("\nprocessador respondeu!");
                                 }
                         }
                 }
