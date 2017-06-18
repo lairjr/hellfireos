@@ -34,12 +34,6 @@ void slave_task(void)
                                 set_message_index(send_msg_buffer, message_index);
                                 set_content(send_msg_buffer, message_content);
 
-                                if (hf_cpuid() >= 7)
-                                {
-                                        printf("\nWaiting...\n");
-                                        delay_ms(40);
-                                }
-
                                 val = hf_sendack(0, 5000, send_msg_buffer, sizeof(send_msg_buffer), hf_cpuid(), 3000);
                                 if (val) {
                                         printf("hf_sendack(): error %d\n", val);

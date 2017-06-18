@@ -19,14 +19,14 @@ dump-single-core: simulator single-core-image
 	docker run -v $(FOLDER_PATH):/hellfireos -w /hellfireos/platform/single_core --name singlecore --rm -t -i hellfire ../../usr/sim/hf_risc_sim/hf_risc_sim image.bin log_file.txt
 
 mpsoc-simulator:
-	docker run -v $(FOLDER_PATH):/hellfireos -w /hellfireos/usr/sim/mpsoc_sim -t -i hellfire make noc_3x3
+	docker run -v $(FOLDER_PATH):/hellfireos -w /hellfireos/usr/sim/mpsoc_sim -t -i hellfire make noc_3x2
 
 mpsoc-images:
-	docker run -v $(FOLDER_PATH):/hellfireos -w /hellfireos/platform/noc_3x3 -t -i hellfire make images
+	docker run -v $(FOLDER_PATH):/hellfireos -w /hellfireos/platform/noc_3x2 -t -i hellfire make images
 
 mpsoc: mpsoc-simulator mpsoc-images
-	cp hellfireos/platform/noc_3x3/*.bin hellfireos/usr/sim/mpsoc_sim/objects/
-	docker run -v $(FOLDER_PATH):/hellfireos -w /hellfireos/usr/sim/mpsoc_sim -t -i --rm hellfire ./mpsoc_sim 3 s
+	cp hellfireos/platform/noc_3x2/*.bin hellfireos/usr/sim/mpsoc_sim/objects/
+	docker run -v $(FOLDER_PATH):/hellfireos -w /hellfireos/usr/sim/mpsoc_sim -t -i --rm hellfire ./mpsoc_sim 10 s
 
 compile-image-tools:
 	rm -rf hellfireos/usr/image_processing/create_bmp hellfireos/usr/image_processing/create_image
