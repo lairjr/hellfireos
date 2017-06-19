@@ -35,6 +35,7 @@ void print_img()
 
 void replace_on_img(int pos_x, int pos_y, int8_t * content)
 {
+        int content_x, content_y = 0;
         int end_x = pos_x + TASK_IMAGE_SIZE;
         if (end_x > image_width)
         {
@@ -46,17 +47,25 @@ void replace_on_img(int pos_x, int pos_y, int8_t * content)
         {
                 end_y = image_height;
         }
-        int content_index = 0;
+
+        end_x -= BORDER;
+        end_y -= BORDER;
+        pos_y += BORDER;
+        pos_x += BORDER;
+        content_x += BORDER;
+        content_y += BORDER;
 
         for (pos_y; pos_y < end_y; pos_y++)
         {
                 int temp_pos_x = pos_x;
+                int temp_content_x = content_x;
                 for (temp_pos_x; temp_pos_x < end_x; temp_pos_x++)
                 {
                         int index = (pos_y * image_width) + temp_pos_x;
-                        img[index] = content[content_index];
-                        content_index++;
+                        img[index] = content[(content_y * TASK_IMAGE_SIZE) + temp_content_x];
+                        temp_content_x++;
                 }
+                content_y++;
         }
 }
 
