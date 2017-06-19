@@ -262,11 +262,11 @@ void apply_border_replication()
 
         int pos_y = BORDER;
 
-        for (pos_y; pos_y < end_y; pos_y++)
+        for (pos_y; pos_y <= end_y; pos_y++)
         {
                 int pos_x = BORDER;
 
-                for (pos_x; pos_x < end_x; pos_x++)
+                for (pos_x; pos_x <= end_x; pos_x++)
                 {
                         int8_t replace_value = img[(pos_y * image_width) + pos_x];
 
