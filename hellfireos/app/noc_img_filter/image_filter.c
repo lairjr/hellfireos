@@ -1,7 +1,7 @@
 #include <hellfire.h>
 #include "process_info.h"
 
-int8_t gausian(int8_t * buffer){
+uint8_t gausian(int8_t * buffer){
         int32_t sum = 0, mpixel;
         uint8_t i, j;
 
@@ -17,7 +17,7 @@ int8_t gausian(int8_t * buffer){
                         sum += ((int32_t)buffer[(i * 5) + j] * (int32_t)kernel[i][j]);
         mpixel = (int32_t)(sum / 159);
 
-        return (int8_t)mpixel;
+        return (uint8_t)mpixel;
 }
 
 void get_image_slice_from_center_point(int8_t * image, int x, int y, int border, int8_t * image_slice)
@@ -76,7 +76,7 @@ int32_t isqrt(int32_t a){
         return root;
 }
 
-int8_t sobel(int8_t * buffer){
+uint8_t sobel(int8_t * buffer){
         int32_t sum = 0, gx = 0, gy = 0;
         int8_t i, j;
 
@@ -102,7 +102,7 @@ int8_t sobel(int8_t * buffer){
         if (sum > 255) sum = 255;
         if (sum < 0) sum = 0;
 
-        return (int8_t)sum;
+        return (uint8_t)sum;
 }
 
 int8_t * do_sobel(int8_t * image, int8_t height, int8_t width)

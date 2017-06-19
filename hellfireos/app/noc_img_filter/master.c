@@ -13,7 +13,7 @@ struct message
 
 struct message messages[500];
 
-int8_t * img;
+uint8_t * img;
 
 void print_img()
 {
@@ -49,7 +49,6 @@ void replace_on_img(int pos_x, int pos_y, int8_t * content)
                 end_y = image_height;
         }
 
-        // int content_index = 0;
         end_x -= BORDER;
         end_y -= BORDER;
         pos_y += BORDER;
@@ -64,10 +63,8 @@ void replace_on_img(int pos_x, int pos_y, int8_t * content)
                 for (temp_pos_x; temp_pos_x < end_x; temp_pos_x++)
                 {
                         int index = (pos_y * image_width) + temp_pos_x;
-                        img[index] = content[(content_y * TASK_IMAGE_SIZE) + temp_content_x];
-                        // img[index] = content[content_index];
+                        img[index] = (uint8_t) content[(content_y * TASK_IMAGE_SIZE) + temp_content_x];
                         temp_content_x++;
-                        // content_index++;
                 }
                 content_y++;
         }
@@ -142,10 +139,8 @@ void distribute_tasks()
         int16_t cpu = 1;
 
         for (y = 0; y < image_height; y = y + (TASK_IMAGE_SIZE - BORDER - BORDER))
-        // for (y = 0; y < image_height; y = y + TASK_IMAGE_SIZE)
         {
                 for (x = 0; x < image_width; x = x + (TASK_IMAGE_SIZE - BORDER - BORDER))
-                // for (x = 0; x < image_width; x = x + TASK_IMAGE_SIZE)
                 {
                         int16_t val;
                         int8_t buffer[MESSAGE_SIZE];
