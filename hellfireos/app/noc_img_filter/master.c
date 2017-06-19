@@ -104,7 +104,7 @@ void receive_tasks()
         }
 }
 
-int8_t * create_buffer(int pos_x, int pos_y, int8_t * buffer)
+void create_buffer(int pos_x, int pos_y, int8_t * buffer)
 {
         int32_t i = 1;
         int end_x = pos_x + TASK_IMAGE_SIZE;
@@ -123,12 +123,12 @@ int8_t * create_buffer(int pos_x, int pos_y, int8_t * buffer)
 
         for (pos_y; pos_y < end_y; pos_y++)
         {
-                int image_index = pos_x;
-                for (pos_x; pos_x < end_x; pos_x++)
+                int temp_pos_x = pos_x;
+                for (temp_pos_x; temp_pos_x < end_x; temp_pos_x++)
                 {
-                        buffer[i] = image[(pos_y * image_width) + image_index];
+                        buffer[i] = image[(pos_y * image_width) + temp_pos_x];
                         i++;
-                        image_index++;
+                        temp_pos_x++;
                 }
         }
 }
@@ -171,6 +171,45 @@ void distribute_tasks()
         }
 }
 
+void replace_top_left(int8_t value)
+{
+        int y = 0;
+
+        for (y; y < (BORDER + 1); y++)
+        {
+                int x = 0;
+                for (x; x < (BORDER + 1); x++)
+                {
+                        img[(y * image_width) + x] = value;
+                }
+        }
+}
+
+void apply_border_replication()
+{
+        int initial_x = BORDER;
+        int initial_y = BORDER;
+        int end_x = image_width - BORDER;
+        int end_y = image_height - BORDER;
+
+        int pos_y = BORDER;
+
+        for (pos_y; pos_y < end_y; pos_y++)
+        {
+                int pos_x = BORDER;
+
+                for (pos_x; pos_x < end_x; pos_x++)
+                {
+                        int8_t replace_value = img[(pos_y * image_width) + pos_x];
+
+                        if (pos_x == initial_x && pos_y == initial_y)
+                        {
+                                replace_top_left(replace_value);
+                        }
+                }
+        }
+}
+
 void master_task(void)
 {
         uint32_t time;
@@ -188,6 +227,8 @@ void master_task(void)
                 time = _readcounter();
 
                 distribute_tasks();
+
+                apply_border_replication();
 
                 print_img();
 
