@@ -119,7 +119,7 @@ int8_t * create_buffer(int pos_x, int pos_y, int8_t * buffer)
                 end_y = image_height;
         }
 
-        printf("%d %d até %d %d\n", pos_y, pos_x, end_y, end_x);
+        printf("%d %d até %d %d\n", pos_y, end_y, pos_x, end_x);
 
         for (pos_y; pos_y < end_y; pos_y++)
         {
@@ -138,9 +138,9 @@ void distribute_tasks()
         int x, y, message_index = 1;
         int16_t cpu = 1;
 
-        for (y = 0; y < image_height; y = y + TASK_IMAGE_SIZE)
+        for (y = 0; y < image_height; y = y + (TASK_IMAGE_SIZE - BORDER - BORDER))
         {
-                for (x = 0; x < image_width; x = x + TASK_IMAGE_SIZE)
+                for (x = 0; x < image_width; x = x + (TASK_IMAGE_SIZE - BORDER - BORDER))
                 {
                         int16_t val;
                         int8_t buffer[MESSAGE_SIZE];
