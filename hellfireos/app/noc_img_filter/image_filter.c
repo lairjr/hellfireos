@@ -1,7 +1,7 @@
 #include <hellfire.h>
 #include "process_info.h"
 
-uint8_t gausian(int8_t * buffer){
+uint8_t gausian(uint8_t * buffer){
         int32_t sum = 0, mpixel;
         uint8_t i, j;
 
@@ -20,7 +20,7 @@ uint8_t gausian(int8_t * buffer){
         return (uint8_t)mpixel;
 }
 
-void get_image_slice_from_center_point(int8_t * image, int x, int y, int border, int8_t * image_slice)
+void get_image_slice_from_center_point(int8_t * image, int x, int y, int border, uint8_t * image_slice)
 {
         int image_vertical, image_horizontal, slice_index = 0;
 
@@ -33,7 +33,7 @@ void get_image_slice_from_center_point(int8_t * image, int x, int y, int border,
         {
                 for (image_horizontal = initial_x; image_horizontal < end_x; image_horizontal++)
                 {
-                        image_slice[slice_index] = image[(image_vertical * TASK_IMAGE_SIZE) + image_horizontal];
+                        image_slice[slice_index] = (uint8_t)image[(image_vertical * TASK_IMAGE_SIZE) + image_horizontal];
                         slice_index++;
                 }
         }
@@ -48,7 +48,7 @@ int8_t * do_gausian(int8_t * image, int8_t height, int8_t width)
         {
                 for (image_horizontal = border; image_horizontal < (width - border); image_horizontal++)
                 {
-                        int8_t image_slice[25];
+                        uint8_t image_slice[25];
 
                         get_image_slice_from_center_point(image, image_horizontal, image_vertical, border, image_slice);
 
@@ -76,7 +76,7 @@ int32_t isqrt(int32_t a){
         return root;
 }
 
-uint8_t sobel(int8_t * buffer){
+uint8_t sobel(uint8_t * buffer){
         int32_t sum = 0, gx = 0, gy = 0;
         int8_t i, j;
 
@@ -114,7 +114,7 @@ int8_t * do_sobel(int8_t * image, int8_t height, int8_t width)
         {
                 for (image_horizontal = border; image_horizontal < (width - border); image_horizontal++)
                 {
-                        int8_t image_slice[9];
+                        uint8_t image_slice[9];
 
                         get_image_slice_from_center_point(image, image_horizontal, image_vertical, border, image_slice);
 
