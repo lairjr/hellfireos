@@ -180,14 +180,82 @@ void replace_top_left(int8_t value)
 {
         int y = 0;
 
-        for (y; y < (BORDER + 1); y++)
+        for (y; y <= BORDER; y++)
         {
                 int x = 0;
-                for (x; x < (BORDER + 1); x++)
+                for (x; x <= BORDER; x++)
                 {
                         img[(y * image_width) + x] = value;
                 }
         }
+}
+
+void replace_top_right(int x, int8_t value)
+{
+        int y = 0;
+        int end_x = x + BORDER;
+
+        for (y; y <= BORDER; y++)
+        {
+                int temp_pos_x = x;
+                for (temp_pos_x; temp_pos_x <= end_x; temp_pos_x++)
+                {
+                        img[(y * image_width) + temp_pos_x] = value;
+                }
+        }
+}
+
+void replace_bottom_left(int y, int8_t value)
+{
+        int pos_y = y + BORDER;
+
+        for (pos_y; pos_y >= y; pos_y--)
+        {
+                int x = 0;
+                for (x; x <= BORDER; x++)
+                {
+                        img[(y * image_width) + x] = value;
+                }
+        }
+}
+
+void replace_bottom_right(int x, int y, int8_t value)
+{
+        int pos_y = y + BORDER;
+        int end_x = x + BORDER;
+
+        for (pos_y; pos_y >= y; pos_y--)
+        {
+                int temp_pos_x = x;
+                for (temp_pos_x; temp_pos_x <= end_x; temp_pos_x++)
+                {
+                        img[(y * image_width) + temp_pos_x] = value;
+                }
+        }
+}
+
+void replace_left(int x, int y, int8_t value)
+{
+        img[(y * image_width) + (x - 1)] = value;
+        img[(y * image_width) + (x - 2)] = value;
+}
+
+void replace_right(int x, int y, int8_t value)
+{
+        img[(y * image_width) + (x + 1)] = value;
+        img[(y * image_width) + (x + 2)] = value;
+}
+
+void replace_top(int x, int y, int8_t value)
+{
+        img[((y - 1) * image_width) + x] = value;
+        img[((y - 2) * image_width) + x] = value;
+}
+
+void replace_bottom(int x, int y, int8_t value)
+{
+        img[((y + 1) * image_width) + x] = value;
+        img[((y + 2) * image_width) + x] = value;
 }
 
 void apply_border_replication()
@@ -210,6 +278,34 @@ void apply_border_replication()
                         if (pos_x == initial_x && pos_y == initial_y)
                         {
                                 replace_top_left(replace_value);
+                        }
+                        if (pos_x == end_x && pos_y == initial_y)
+                        {
+                                replace_top_right(pos_x, replace_value);
+                        }
+                        if (pos_x == initial_x && pos_y == end_y)
+                        {
+                                replace_bottom_left(pos_y, replace_value);
+                        }
+                        if (pos_x == end_x && pos_y == end_y)
+                        {
+                                replace_bottom_right(pos_x, pos_y, replace_value);
+                        }
+                        if (pos_x == initial_x)
+                        {
+                                replace_left(pos_x, pos_y, replace_value);
+                        }
+                        if (pos_x == end_x)
+                        {
+                                replace_right(pos_x, pos_y, replace_value);
+                        }
+                        if (pos_y == initial_y)
+                        {
+                                replace_top(pos_x, pos_y, replace_value);
+                        }
+                        if (pos_y == end_y)
+                        {
+                                replace_bottom(pos_x, pos_y, replace_value);
                         }
                 }
         }
