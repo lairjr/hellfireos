@@ -35,7 +35,7 @@ void print_img()
 
 void replace_on_img(int pos_x, int pos_y, int8_t * content)
 {
-        int content_x, content_y = 0;
+        // int content_x, content_y = 0;
         int end_x = pos_x + TASK_IMAGE_SIZE;
         if (end_x > image_width)
         {
@@ -48,24 +48,27 @@ void replace_on_img(int pos_x, int pos_y, int8_t * content)
                 end_y = image_height;
         }
 
-        end_x -= BORDER;
-        end_y -= BORDER;
-        pos_y += BORDER;
-        pos_x += BORDER;
-        content_x += BORDER;
-        content_y += BORDER;
+        int content_index = 0;
+        // end_x -= BORDER;
+        // end_y -= BORDER;
+        // pos_y += BORDER;
+        // pos_x += BORDER;
+        // content_x += BORDER;
+        // content_y += BORDER;
 
         for (pos_y; pos_y < end_y; pos_y++)
         {
                 int temp_pos_x = pos_x;
-                int temp_content_x = content_x;
+                // int temp_content_x = content_x;
                 for (temp_pos_x; temp_pos_x < end_x; temp_pos_x++)
                 {
                         int index = (pos_y * image_width) + temp_pos_x;
-                        img[index] = content[(content_y * TASK_IMAGE_SIZE) + temp_content_x];
-                        temp_content_x++;
+                        // img[index] = content[(content_y * TASK_IMAGE_SIZE) + temp_content_x];
+                        img[index] = content[content_index];
+                        // temp_content_x++;
+                        content_index++;
                 }
-                content_y++;
+                // content_y++;
         }
 }
 
@@ -128,7 +131,6 @@ void create_buffer(int pos_x, int pos_y, int8_t * buffer)
                 {
                         buffer[i] = image[(pos_y * image_width) + temp_pos_x];
                         i++;
-                        temp_pos_x++;
                 }
         }
 }
@@ -138,9 +140,11 @@ void distribute_tasks()
         int x, y, message_index = 1;
         int16_t cpu = 1;
 
-        for (y = 0; y < image_height; y = y + (TASK_IMAGE_SIZE - BORDER - BORDER))
+        // for (y = 0; y < image_height; y = y + (TASK_IMAGE_SIZE - BORDER - BORDER))
+        for (y = 0; y < image_height; y = y + TASK_IMAGE_SIZE)
         {
-                for (x = 0; x < image_width; x = x + (TASK_IMAGE_SIZE - BORDER - BORDER))
+                // for (x = 0; x < image_width; x = x + (TASK_IMAGE_SIZE - BORDER - BORDER))
+                for (x = 0; x < image_width; x = x + TASK_IMAGE_SIZE)
                 {
                         int16_t val;
                         int8_t buffer[MESSAGE_SIZE];
