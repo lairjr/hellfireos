@@ -49,12 +49,12 @@ void replace_on_img(int pos_x, int pos_y, int8_t * content)
                 end_y = image_height;
         }
 
-        end_x -= BORDER;
-        end_y -= BORDER;
+        end_x -= BORDER - BORDER;
+        end_y -= BORDER - BORDER;
         pos_y += BORDER;
         pos_x += BORDER;
-        content_x += BORDER;
-        content_y += BORDER;
+        content_x += BORDER + BORDER;
+        content_y += BORDER + BORDER;
 
         for (pos_y; pos_y < end_y; pos_y++)
         {
@@ -138,9 +138,9 @@ void distribute_tasks()
         int x, y, message_index = 1;
         int16_t cpu = 1;
 
-        for (y = 0; y < image_height; y = y + (TASK_IMAGE_SIZE - BORDER - BORDER))
+        for (y = 0; y < image_height; y = y + (TASK_IMAGE_SIZE - BORDER - BORDER - BORDER))
         {
-                for (x = 0; x < image_width; x = x + (TASK_IMAGE_SIZE - BORDER - BORDER))
+                for (x = 0; x < image_width; x = x + (TASK_IMAGE_SIZE - BORDER - BORDER - BORDER))
                 {
                         int16_t val;
                         int8_t buffer[MESSAGE_SIZE];
