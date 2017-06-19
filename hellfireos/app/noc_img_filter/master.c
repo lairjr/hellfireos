@@ -109,16 +109,7 @@ void create_buffer(int pos_x, int pos_y, int8_t * buffer)
 {
         int32_t i = 1;
         int end_x = pos_x + TASK_IMAGE_SIZE;
-        if (end_x > image_width)
-        {
-                end_x = image_width;
-        }
-
         int end_y = pos_y + TASK_IMAGE_SIZE;
-        if (end_y > image_height)
-        {
-                end_y = image_height;
-        }
 
         printf("%d %d até %d %d\n", pos_y, end_y, pos_x, end_x);
 
@@ -127,7 +118,14 @@ void create_buffer(int pos_x, int pos_y, int8_t * buffer)
                 int temp_pos_x = pos_x;
                 for (temp_pos_x; temp_pos_x < end_x; temp_pos_x++)
                 {
-                        buffer[i] = image[(pos_y * image_width) + temp_pos_x];
+                        if (pos_y > image_height || pos_x > image_width)
+                        {
+                                buffer[i] = 0x0;
+                        }
+                        else
+                        {
+                                buffer[i] = image[(pos_y * image_width) + temp_pos_x];
+                        }
                         i++;
                 }
         }
