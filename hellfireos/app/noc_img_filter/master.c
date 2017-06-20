@@ -49,14 +49,12 @@ void replace_on_img(int pos_x, int pos_y, int8_t * content)
                 end_y = image_height;
         }
 
-        end_x -= BORDER;
-        end_y -= BORDER;
-        // pos_y += BORDER;
-        // pos_x += BORDER;
-        content_x += BORDER;
-        content_y += BORDER;
-
-        printf("ARROZ %d %d", pos_x, pos_y);
+        end_x -= BORDER - BORDER;
+        end_y -= BORDER - BORDER;
+        pos_y += BORDER;
+        pos_x += BORDER;
+        content_x += BORDER + BORDER;
+        content_y += BORDER + BORDER;
 
         for (pos_y; pos_y < end_y; pos_y++)
         {
@@ -103,7 +101,6 @@ void receive_tasks()
 
                                 if (message_index < 0 && pos_x == 0 && pos_y == 0)
                                 {
-                                        printf("PEPINO\n");
                                         continue;
                                 }
                                 else
@@ -146,9 +143,9 @@ void distribute_tasks()
         int x, y, message_index = 1;
         int16_t cpu = 1;
 
-        for (y = 0; y < (image_height + TASK_IMAGE_SIZE); y = y + (TASK_IMAGE_SIZE - BORDER - BORDER))
+        for (y = 0; y < (image_height + TASK_IMAGE_SIZE); y = y + (TASK_IMAGE_SIZE - BORDER - BORDER - BORDER))
         {
-                for (x = 0; x < (image_width + TASK_IMAGE_SIZE); x = x + (TASK_IMAGE_SIZE - BORDER - BORDER))
+                for (x = 0; x < (image_width + TASK_IMAGE_SIZE); x = x + (TASK_IMAGE_SIZE - BORDER - BORDER - BORDER))
                 {
                         int16_t val;
                         int8_t buffer[MESSAGE_SIZE];
@@ -212,12 +209,12 @@ void replace_bottom_left(int y, int8_t value)
 {
         int pos_y = y + BORDER;
 
-        for (pos_y; pos_y >= y; pos_y--)
+        for (pos_y; pos_y > y; pos_y--)
         {
                 int x = 0;
                 for (x; x <= BORDER; x++)
                 {
-                        img[(y * image_width) + x] = value;
+                        img[(pos_y * image_width) + x] = value;
                 }
         }
 }
@@ -227,12 +224,12 @@ void replace_bottom_right(int x, int y, int8_t value)
         int pos_y = y + BORDER;
         int end_x = x + BORDER;
 
-        for (pos_y; pos_y >= y; pos_y--)
+        for (pos_y; pos_y > y; pos_y--)
         {
                 int temp_pos_x = x;
                 for (temp_pos_x; temp_pos_x <= end_x; temp_pos_x++)
                 {
-                        img[(y * image_width) + temp_pos_x] = value;
+                        img[(pos_y * image_width) + temp_pos_x] = value;
                 }
         }
 }
