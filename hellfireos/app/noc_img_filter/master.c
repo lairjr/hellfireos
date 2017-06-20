@@ -49,12 +49,14 @@ void replace_on_img(int pos_x, int pos_y, int8_t * content)
                 end_y = image_height;
         }
 
-        end_x -= BORDER - BORDER;
-        end_y -= BORDER - BORDER;
-        pos_y += BORDER;
-        pos_x += BORDER;
-        content_x += BORDER + BORDER;
-        content_y += BORDER + BORDER;
+        end_x -= BORDER;
+        end_y -= BORDER;
+        // pos_y += BORDER;
+        // pos_x += BORDER;
+        content_x += BORDER;
+        content_y += BORDER;
+
+        printf("ARROZ %d %d", pos_x, pos_y);
 
         for (pos_y; pos_y < end_y; pos_y++)
         {
@@ -99,7 +101,15 @@ void receive_tasks()
 
                                 printf("%d %d\n", pos_x, pos_y);
 
-                                replace_on_img(pos_x, pos_y, message_content);
+                                if (message_index < 0 && pos_x == 0 && pos_y == 0)
+                                {
+                                        printf("PEPINO\n");
+                                        continue;
+                                }
+                                else
+                                {
+                                        replace_on_img(pos_x, pos_y, message_content);
+                                }
                         }
                 }
         }
@@ -136,9 +146,9 @@ void distribute_tasks()
         int x, y, message_index = 1;
         int16_t cpu = 1;
 
-        for (y = 0; y < image_height; y = y + (TASK_IMAGE_SIZE - BORDER - BORDER - BORDER))
+        for (y = 0; y < (image_height + TASK_IMAGE_SIZE); y = y + (TASK_IMAGE_SIZE - BORDER - BORDER))
         {
-                for (x = 0; x < image_width; x = x + (TASK_IMAGE_SIZE - BORDER - BORDER - BORDER))
+                for (x = 0; x < (image_width + TASK_IMAGE_SIZE); x = x + (TASK_IMAGE_SIZE - BORDER - BORDER))
                 {
                         int16_t val;
                         int8_t buffer[MESSAGE_SIZE];
