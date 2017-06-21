@@ -29,11 +29,12 @@ void get_image_slice_from_center_point(int8_t * image, int x, int y, int border,
         int initial_y = y - border;
         int end_y = y + border;
 
-        for (image_vertical = initial_y; image_vertical < end_y; image_vertical++)
+        for (image_vertical = initial_y; image_vertical <= end_y; image_vertical++)
         {
-                for (image_horizontal = initial_x; image_horizontal < end_x; image_horizontal++)
+                for (image_horizontal = initial_x; image_horizontal <= end_x; image_horizontal++)
                 {
-                        image_slice[slice_index] = (uint8_t)image[(image_vertical * TASK_IMAGE_SIZE) + image_horizontal];
+
+                        image_slice[slice_index] = (int8_t)image[(image_vertical * TASK_IMAGE_SIZE) + image_horizontal];
                         slice_index++;
                 }
         }
@@ -41,7 +42,8 @@ void get_image_slice_from_center_point(int8_t * image, int x, int y, int border,
 
 int8_t * do_gausian(int8_t * image, int8_t height, int8_t width)
 {
-        int image_vertical, image_horizontal = 0;
+        int image_vertical = 0;
+        int image_horizontal = 0;
         int border = 2;
 
         for (image_vertical = border; image_vertical < (height - border); image_vertical++)
