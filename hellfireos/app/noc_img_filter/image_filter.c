@@ -107,10 +107,12 @@ uint8_t sobel(uint8_t * buffer){
         return (uint8_t)sum;
 }
 
-int8_t * do_sobel(int8_t * image, int8_t height, int8_t width)
+int8_t * do_sobel(int8_t * image_origin, int8_t height, int8_t width)
 {
-        int image_vertical, image_horizontal = 0;
+        int image_vertical = 0;
+        int image_horizontal = 0;
         int border = 1;
+        int8_t image_return[1024];
 
         for (image_vertical = border; image_vertical < (height - border); image_vertical++)
         {
@@ -118,11 +120,11 @@ int8_t * do_sobel(int8_t * image, int8_t height, int8_t width)
                 {
                         uint8_t image_slice[9];
 
-                        get_image_slice_from_center_point(image, image_horizontal, image_vertical, border, image_slice);
+                        get_image_slice_from_center_point(image_origin, image_horizontal, image_vertical, border, image_slice);
 
-                        image[(image_vertical * height) + image_horizontal] = sobel(image_slice);
+                        image_return[(image_vertical * height) + image_horizontal] = sobel(image_slice);
                 }
         }
 
-        return image;
+        return image_return;
 }
